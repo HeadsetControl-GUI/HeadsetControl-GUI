@@ -87,19 +87,29 @@ bool setOSRunOnStartup(bool enable)
     return false;
 
 #elif defined(Q_OS_LINUX)
-    QString appDir = QCoreApplication::applicationDirPath();
-    QString autostartPath = QDir::homePath() + "/.config/autostart/";
-    QString desktopFilePath = autostartPath + appName + "-autostart.desktop";
+    String appDir = QCoreApplication::applicationDirPath();
+    QString configPath = QDir::homePath() + QDir::separator()  + ".config";
+    QString autostartPath = configPath + QDir::separator() + "autostart";
+    QString desktopFilePath = autostartPath + QDir::separator()  + appName + "-autostart.desktop";
+
+    QFile::remove(desktopFilePath);
 
     if (enable) {
         QFile::remove(desktopFilePath);
+        QDir configDir(configPath);
         QFile desktopFile(desktopFilePath);
+        if (!configDir.exists("autostart")) {
+            configDir.mkdir("autostart");
+        }
+
         if (desktopFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
             QTextStream out(&desktopFile);
             out << "[Desktop Entry]\n";
             out << "Path=" + appDir + "\n";
             out << "Type=Application\n";
-            out << "NoDisplay=true\n";
+            out << "Hidden=false\n";
+            out << "NoDisplay=false\n";
+            out << "X-GNOME-Autostart-enabled=true\n";
             out << "Exec=" << appPath << " --tray\n";
             out << "Name=" << appName << "\n";
             out << "Icon=" << appName << "\n";
@@ -108,7 +118,6 @@ bool setOSRunOnStartup(bool enable)
             return true;
         }
     }
-    QFile::remove(desktopFilePath);
 
     return false;
 #endif
