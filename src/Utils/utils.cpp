@@ -87,7 +87,7 @@ bool setOSRunOnStartup(bool enable)
     return false;
 
 #elif defined(Q_OS_LINUX)
-    String appDir = QCoreApplication::applicationDirPath();
+    QString appDir = QCoreApplication::applicationDirPath();
     QString configPath = QDir::homePath() + QDir::separator()  + ".config";
     QString autostartPath = configPath + QDir::separator() + "autostart";
     QString desktopFilePath = autostartPath + QDir::separator()  + appName + "-autostart.desktop";
