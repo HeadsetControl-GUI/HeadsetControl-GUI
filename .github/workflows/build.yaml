@@ -1,11 +1,11 @@
 name: Build
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'src/**'
-      - 'HeadsetControl-GUI.pro'
+#  push:
+#    branches: [main]
+#    paths:
+#      - 'src/**'
+#      - 'HeadsetControl-GUI.pro'
   pull_request:
     branches: [main]
 
