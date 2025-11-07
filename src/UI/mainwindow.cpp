@@ -84,8 +84,9 @@ void MainWindow::changeEvent(QEvent *e)
 void MainWindow::bindEvents()
 {
     // Tool Bar
-    connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::editProgramSetting);
     connect(ui->actionLoad_Device, &QAction::triggered, this, &MainWindow::selectDevice);
+    connect(ui->actionReload_UI, &QAction::triggered, this, &MainWindow::updateGUI);
+    connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::editProgramSetting);
     connect(ui->actionCheck_Updates, &QAction::triggered, this, &MainWindow::checkForUpdates);
 
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAbout);
@@ -589,24 +590,33 @@ void MainWindow::setBatteryStatus()
         ui->batteryPercentage->setText(tr("Headset Off"));
         trayIcon->setToolTip(tr("HeadsetControl \r\nHeadset Off"));
         changeTrayIconTo("headphones");
-    } else if (status == "BATTERY_CHARGING") {
+        if (settings.notificationHeadsetDisconnected && !notified) {
+            sendAppNotification(tr("Headset Disconnected"),
+                                tr("Your headset is disconnected or has been turned off"),
+                                QIcon("headphones"));
+            if (settings.audioNotification) {
+                API.playNotificationSound(0);
+            }
+            notified = true;
+        }
+    } else if (status == "BATTERY_CHARGING" && batteryLevel >= 0) {
         ui->batteryPercentage->setText(level + tr("% - Charging"));
         trayIcon->setToolTip(tr("HeadsetControl \r\nBattery: Charging - ") + level + "%");
-        if (batteryLevel < 100){
-            changeTrayIconTo("battery-charging");
-        } else {
+        if (batteryLevel >= 100) {
+            changeTrayIconTo("battery-fully-charged");
+            if (settings.audioNotification) {
+                API.playNotificationSound(1);
+            }
             if (settings.notificationBatteryFull && !notified) {
                 sendAppNotification(tr("Battery Charged!"),
                                     tr("The battery has been charged to 100%"),
                                     QIcon("battery-level-full"));
-                if (settings.audioNotification) {
-                    API.playNotificationSound(1);
-                }
                 notified = true;
             }
-            changeTrayIconTo("battery-fully-charged");
+        } else {
+            changeTrayIconTo("battery-charging");
         }
-    } else if (status == "BATTERY_AVAILABLE") {
+    } else if (status == "BATTERY_AVAILABLE" && batteryLevel >= 0) {
         ui->batteryPercentage->setText(level + tr("% - Descharging"));
         trayIcon->setToolTip(tr("HeadsetControl \r\nBattery: ") + level + "%");
         if (batteryLevel > 75) {
@@ -617,20 +627,20 @@ void MainWindow::setBatteryStatus()
             notified = false;
         } else {
             changeTrayIconTo("battery-low");
+            if (settings.audioNotification) {
+                API.playNotificationSound(0);
+            }
             if (settings.notificationBatteryLow && !notified) {
                 sendAppNotification(tr("Battery Alert!"),
                                     tr("The battery of your headset is running low"),
                                     QIcon("battery-low"));
-                if (settings.audioNotification) {
-                    API.playNotificationSound(0);
-                }
                 notified = true;
             }
         }
     } else {
-        ui->batteryPercentage->setText(tr("No battery info"));
-        trayIcon->setToolTip("HeadsetControl");
-        changeTrayIconTo("headphones");
+        ui->batteryPercentage->setText(tr("Error getting battery info: ") + status + "(" + level + ")");
+        trayIcon->setToolTip(tr("HeadsetControl \r\nBattery: Error - ") + status + "(" + level + ")");
+        changeTrayIconTo("battery-error");
     }
 }
 

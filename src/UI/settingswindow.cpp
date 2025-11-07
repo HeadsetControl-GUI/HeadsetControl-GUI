@@ -25,6 +25,7 @@ SettingsWindow::SettingsWindow(const Settings &programSettings, QWidget *parent)
 
     ui->runonstartupCheckBox->setChecked(programSettings.runOnstartup);
 
+    ui->headsetdisconnectednotificationCheckBox->setChecked(programSettings.notificationHeadsetDisconnected);
     ui->batteryfullnotificationCheckBox->setChecked(programSettings.notificationBatteryFull);
     ui->batterylownotificationCheckBox->setChecked(programSettings.notificationBatteryLow);
     ui->batterylowtresholdSpinBox->setValue(programSettings.batteryLowThreshold);
@@ -42,6 +43,7 @@ Settings SettingsWindow::getSettings()
 {
     Settings settings;
     settings.runOnstartup = ui->runonstartupCheckBox->isChecked();
+    settings.notificationHeadsetDisconnected = ui->headsetdisconnectednotificationCheckBox->isChecked();
     settings.notificationBatteryFull = ui->batteryfullnotificationCheckBox->isChecked();
     settings.notificationBatteryLow = ui->batterylownotificationCheckBox->isChecked();
     settings.batteryLowThreshold = ui->batterylowtresholdSpinBox->value();

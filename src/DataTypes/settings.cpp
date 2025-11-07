@@ -22,6 +22,9 @@ Settings loadSettingsFromFile(const QString &filePath)
         if (json.contains("runOnStartup")) {
             s.runOnstartup = json["runOnStartup"].toBool();
         }
+        if (json.contains("notificationHeadsetDisconnected")) {
+            s.batteryLowThreshold = json["notificationHeadsetDisconnected"].toInt();
+        }
         if (json.contains("notificationBatteryFull")) {
             s.batteryLowThreshold = json["notificationBatteryFull"].toInt();
         }
@@ -57,6 +60,7 @@ void saveSettingstoFile(const Settings &settings, const QString &filePath)
 {
     QJsonObject json;
     json["runOnStartup"] = settings.runOnstartup;
+    json["notificationHeadsetDisconnected"] = settings.notificationHeadsetDisconnected;
     json["notificationBatteryFull"] = settings.notificationBatteryFull;
     json["notificationBatteryLow"] = settings.notificationBatteryLow;
     json["audioNotification"] = settings.audioNotification;

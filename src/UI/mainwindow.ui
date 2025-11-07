@@ -402,6 +402,9 @@ Model:</string>
          <property name="orientation">
           <enum>Qt::Orientation::Horizontal</enum>
          </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Policy::Expanding</enum>
+         </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
@@ -1946,6 +1949,7 @@ Model:</string>
      <string>File</string>
     </property>
     <addaction name="actionLoad_Device"/>
+    <addaction name="actionReload_UI"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
     <addaction name="actionCheck_Updates"/>
@@ -2001,6 +2005,14 @@ Model:</string>
    </property>
    <property name="text">
     <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionReload_UI">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::ViewRefresh"/>
+   </property>
+   <property name="text">
+    <string>Reload UI</string>
    </property>
   </action>
  </widget>

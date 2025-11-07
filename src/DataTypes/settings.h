@@ -24,6 +24,7 @@ public:
 
     bool runOnstartup = false;
 
+    bool notificationHeadsetDisconnected = true;
     bool notificationBatteryFull = true;
     bool notificationBatteryLow = true;
     int batteryLowThreshold = 15;
