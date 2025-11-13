@@ -307,6 +307,13 @@ DON'T PUT TOO LOW VALUES</string>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
+         <widget class="QLabel" name="cliexeLabel">
+          <property name="text">
+           <string>CLI Exe:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QLabel" name="commandexeLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
@@ -315,7 +322,7 @@ DON'T PUT TOO LOW VALUES</string>
            </sizepolicy>
           </property>
           <property name="text">
-           <string>None</string>
+           <string/>
           </property>
          </widget>
         </item>
