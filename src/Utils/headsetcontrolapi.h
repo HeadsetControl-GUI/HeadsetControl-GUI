@@ -71,6 +71,8 @@ public slots:
     void setBluetoothWhenPoweredOn(bool enabled, bool emitSignal = true);
     void setBluetoothCallVolume(int option, bool emitSignal = true);
 
+    void updateChatMix();
+
 signals:
     void actionSuccesful();
 };

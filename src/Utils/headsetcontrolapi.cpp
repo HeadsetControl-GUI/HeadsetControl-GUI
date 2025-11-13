@@ -1,5 +1,4 @@
 #include "headsetcontrolapi.h"
-#include "utils.h"
 
 #include <QDir>
 #include <QJsonArray>
@@ -111,7 +110,7 @@ Device *HeadsetControlAPI::getDevice()
 QList<Device *> HeadsetControlAPI::getConnectedDevices(const QString& vendorId, const QString& productId)
 {
     QStringList args = QStringList();
-    args << QString("--device") << QString(vendorId+":"+productId);
+    args << "--device" << vendorId+":"+productId;
     QString output = sendCommand(args);
     QJsonObject jsonInfo = parseOutput(output);
 
@@ -135,8 +134,8 @@ QString HeadsetControlAPI::sendCommand(const QStringList &args_list)
 {
     QProcess *proc = new QProcess();
     QStringList args = QStringList();
-    args << QString("--output") << QString("JSON");
-    //args << QString("--test-device"); //Uncomment this to enable test device
+    args << "--output" << "JSON";
+    //args << "--test-device"; //Uncomment this to enable test device
     args << args_list;
 
     proc->setProgram(headsetcontrolFilePath);
@@ -177,7 +176,7 @@ QJsonObject HeadsetControlAPI::parseOutput(
 Action HeadsetControlAPI::sendAction(const QStringList &args_list)
 {
     QStringList args;
-    args << QString("--device") << QString(selectedVendorId+":"+selectedProductId) << args_list;
+    args << "--device" << selectedVendorId+":"+selectedProductId << args_list;
     QString output = sendCommand(args);
     QJsonObject jsonInfo = parseOutput(output);
     QJsonArray actions = jsonInfo["actions"].toArray();
@@ -208,7 +207,7 @@ Action HeadsetControlAPI::sendAction(const QStringList &args_list)
 void HeadsetControlAPI::setSidetone(
     int level, bool emitSignal)
 {
-    QStringList args = QStringList() << QString("--sidetone") << QString::number(level);
+    QStringList args = QStringList() << "--sidetone" << QString::number(level);
     Action a = sendAction(args);
     if (emitSignal && a.success) {
         selectedDevice->sidetone = level;
@@ -219,7 +218,7 @@ void HeadsetControlAPI::setSidetone(
 void HeadsetControlAPI::setLights(
     bool enabled, bool emitSignal)
 {
-    QStringList args = QStringList() << QString("--light") << QString::number(enabled);
+    QStringList args = QStringList() << "--light" << QString::number(enabled);
     Action a = sendAction(args);
     if (emitSignal && a.success) {
         selectedDevice->lights = enabled;
@@ -230,7 +229,7 @@ void HeadsetControlAPI::setLights(
 void HeadsetControlAPI::setVoicePrompts(
     bool enabled, bool emitSignal)
 {
-    QStringList args = QStringList() << QString("--voice-prompt") << QString::number(enabled);
+    QStringList args = QStringList() << "--voice-prompt" << QString::number(enabled);
     Action a = sendAction(args);
     if (emitSignal && a.success) {
         selectedDevice->voice_prompts = enabled;
@@ -241,7 +240,7 @@ void HeadsetControlAPI::setVoicePrompts(
 void HeadsetControlAPI::setInactiveTime(
     int time, bool emitSignal)
 {
-    QStringList args = QStringList() << QString("--inactive-time") << QString::number(time);
+    QStringList args = QStringList() << "--inactive-time" << QString::number(time);
     Action a = sendAction(args);
     if (emitSignal && a.success) {
         selectedDevice->inactive_time = time;
@@ -252,7 +251,7 @@ void HeadsetControlAPI::setInactiveTime(
 void HeadsetControlAPI::playNotificationSound(
     int id, bool emitSignal)
 {
-    QStringList args = QStringList() << QString("--notificate") << QString::number(id);
+    QStringList args = QStringList() << "--notificate" << QString::number(id);
     Action a = sendAction(args);
     if (emitSignal && a.success) {
         selectedDevice->notification_sound = id;
@@ -263,7 +262,7 @@ void HeadsetControlAPI::playNotificationSound(
 void HeadsetControlAPI::setVolumeLimiter(
     bool enabled, bool emitSignal)
 {
-    QStringList args = QStringList() << QString("--volume-limiter") << QString::number(enabled);
+    QStringList args = QStringList() << "--volume-limiter" << QString::number(enabled);
     Action a = sendAction(args);
     if (emitSignal && a.success) {
         selectedDevice->volume_limiter = enabled;
@@ -279,7 +278,7 @@ void HeadsetControlAPI::setEqualizer(
         equalizer += QString::number(value) + ",";
     }
     equalizer.removeLast();
-    QStringList args = QStringList() << QString("--equalizer") << equalizer;
+    QStringList args = QStringList() << "--equalizer" << equalizer;
     Action a = sendAction(args);
     if (emitSignal && a.success) {
         selectedDevice->equalizer_curve = equalizerValues;
@@ -291,7 +290,7 @@ void HeadsetControlAPI::setEqualizer(
 void HeadsetControlAPI::setEqualizerPreset(
     int number, bool emitSignal)
 {
-    QStringList args = QStringList() << QString("--equalizer-preset") << QString::number(number);
+    QStringList args = QStringList() << "--equalizer-preset" << QString::number(number);
     Action a = sendAction(args);
     if (emitSignal && a.success) {
         selectedDevice->equalizer_preset = number;
@@ -302,7 +301,7 @@ void HeadsetControlAPI::setEqualizerPreset(
 void HeadsetControlAPI::setRotateToMute(
     bool enabled, bool emitSignal)
 {
-    QStringList args = QStringList() << QString("--rotate-to-mute") << QString::number(enabled);
+    QStringList args = QStringList() << "--rotate-to-mute" << QString::number(enabled);
     Action a = sendAction(args);
     if (emitSignal && a.success) {
         selectedDevice->rotate_to_mute = enabled;
@@ -313,8 +312,7 @@ void HeadsetControlAPI::setRotateToMute(
 void HeadsetControlAPI::setMuteLedBrightness(
     int brightness, bool emitSignal)
 {
-    QStringList args = QStringList() << QString("--microphone-mute-led-brightness")
-    << QString::number(brightness);
+    QStringList args = QStringList() << "--microphone-mute-led-brightness" << QString::number(brightness);
     Action a = sendAction(args);
     if (emitSignal && a.success) {
         selectedDevice->mic_mute_led_brightness = brightness;
@@ -325,7 +323,7 @@ void HeadsetControlAPI::setMuteLedBrightness(
 void HeadsetControlAPI::setMicrophoneVolume(
     int volume, bool emitSignal)
 {
-    QStringList args = QStringList() << QString("--microphone-volume") << QString::number(volume);
+    QStringList args = QStringList() << "--microphone-volume" << QString::number(volume);
     Action a = sendAction(args);
     if (emitSignal && a.success) {
         selectedDevice->mic_volume = volume;
@@ -336,7 +334,7 @@ void HeadsetControlAPI::setMicrophoneVolume(
 void HeadsetControlAPI::setBluetoothWhenPoweredOn(
     bool enabled, bool emitSignal)
 {
-    QStringList args = QStringList() << QString("--bt-when-powered-on") << QString::number(enabled);
+    QStringList args = QStringList() << "--bt-when-powered-on" << QString::number(enabled);
     Action a = sendAction(args);
     if (emitSignal && a.success) {
         selectedDevice->bt_when_powered_on = enabled;
@@ -347,10 +345,29 @@ void HeadsetControlAPI::setBluetoothWhenPoweredOn(
 void HeadsetControlAPI::setBluetoothCallVolume(
     int option, bool emitSignal)
 {
-    QStringList args = QStringList() << QString("--bt-call-volume") << QString::number(option);
+    QStringList args = QStringList() << "--bt-call-volume" << QString::number(option);
     Action a = sendAction(args);
     if (emitSignal && a.success) {
         selectedDevice->bt_call_volume = option;
         emit actionSuccesful();
     }
+}
+
+void HeadsetControlAPI::updateChatMix(){
+    if(selectedDevice->capabilities.contains("CAP_CHATMIX_STATUS")){
+        selectedDevice->chatmix = -1;
+        return;
+    }
+    QStringList args = QStringList() << "--device" << selectedVendorId+":"+selectedProductId << "--chatmix" << "--output" << "STANDARD";
+    QString output = sendCommand(args);
+    QString trimmed = output.trimmed();
+    int idx = trimmed.lastIndexOf("Chatmix: ");
+    if (idx == -1) {
+        selectedDevice->chatmix = -1;
+        return;
+    }
+
+    QString after = trimmed.mid(idx + QStringLiteral("Chatmix: ").length()).trimmed();
+
+    selectedDevice->chatmix = after.toInt();
 }

@@ -37,6 +37,13 @@ SettingsWindow::SettingsWindow(const Settings &programSettings, QWidget *parent)
     loadStyles();
     ui->selectstyleComboBox->setCurrentIndex(
         ui->selectstyleComboBox->findText(programSettings.styleName));
+
+    ui->commandexeLabel->setText(programSettings.commandExe);
+    connect(ui->commandexePushButton, &QPushButton::clicked, this, &SettingsWindow::setCommandExe);
+    connect(ui->commandclearPushButton, &QPushButton::clicked, this, &SettingsWindow::clearCommandExe);
+    ui->commandargumentsValue->setText(programSettings.commandArgs);
+    ui->commandintervaltimeDoubleSpinBox->setValue((double) programSettings.msecCommandIntervalTime
+                                         / 1000);
 }
 
 Settings SettingsWindow::getSettings()
@@ -50,6 +57,9 @@ Settings SettingsWindow::getSettings()
     settings.audioNotification = ui->enableaudioNotificationCheckBox->isChecked();
     settings.msecUpdateIntervalTime = ui->updateintervaltimeDoubleSpinBox->value() * 1000;
     settings.styleName = ui->selectstyleComboBox->currentText();
+    settings.commandExe = ui->commandexeLabel->text();
+    settings.commandArgs = ui->commandargumentsValue->text();
+    settings.msecCommandIntervalTime = ui->commandintervaltimeDoubleSpinBox->value() * 1000;
 
     return settings;
 }
@@ -105,6 +115,25 @@ void SettingsWindow::removeStyle()
     }
 
     loadStyles();
+}
+
+void SettingsWindow::setCommandExe(){
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::AnyFile);
+
+    if (dialog.exec())
+    {
+        QStringList fileUrls = dialog.selectedFiles();
+        QUrl fileUrl = QUrl(fileUrls[0]);
+        if (fileUrl.isValid()) {
+            QString source = fileUrl.toString();
+            ui->commandexeLabel->setText(source);
+        }
+    }
+}
+
+void SettingsWindow::clearCommandExe(){
+    ui->commandexeLabel->setText("");
 }
 
 SettingsWindow::~SettingsWindow()

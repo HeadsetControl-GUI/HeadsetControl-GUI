@@ -10,6 +10,7 @@
 
 #include <QFile>
 #include <QFileDialog>
+#include <QProcess>
 #include <QScreen>
 #include <QStyleHints>
 
@@ -19,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     , trayIcon(new QSystemTrayIcon(this))
     , trayMenu(new QMenu(this))
     , timerGUI(new QTimer(this))
+    , timerCommand(new QTimer(this))
     , API(HeadsetControlAPI(HEADSETCONTROL_DIRECTORY))
 {
     qDebug() << "Headsetcontrol";
@@ -52,12 +54,43 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(timerGUI, &QTimer::timeout, this, &::MainWindow::updateGUI);
     timerGUI->start(settings.msecUpdateIntervalTime);
+    connect(timerCommand, &QTimer::timeout, this, &::MainWindow::sendCommand);
+    if(settings.commandExe != ""){
+        timerCommand->start(settings.msecCommandIntervalTime);
+    }
+}
+
+void sobstituteArgs(QStringList &args, const Device* device){
+    for(int i=0; i<args.size(); i++){
+        args[i].replace("{chatmix}", QString::number(device->chatmix));
+    }
+}
+
+void MainWindow::sendCommand(){
+    API.updateChatMix();
+    QProcess *proc = new QProcess();
+    QStringList args = QStringList();
+    if(settings.commandArgs != ""){
+        args = settings.commandArgs.split(" ");
+    }
+
+    sobstituteArgs(args, selectedDevice);
+    proc->setProgram(settings.commandExe);
+    proc->setArguments(args);
+
+    proc->start();
+    proc->waitForFinished();
+    qDebug() << "Command Output:\t" << proc->readAllStandardOutput();
+    qDebug() << "ExitStatus:\t" << proc->exitStatus();
+    qDebug() << "ExitCode:\t" << proc->exitCode();
 }
 
 MainWindow::~MainWindow()
 {
     timerGUI->stop();
+    timerCommand->stop();
     delete timerGUI;
+    delete timerCommand;
     delete trayMenu;
     delete trayIcon;
     delete ui;
@@ -301,7 +334,7 @@ void MainWindow::rescaleAndMoveWindow()
 
 void MainWindow::resetGUI()
 {
-    trayIcon->setIcon(QIcon(":/icons/light/png/headphones.png"));
+    trayIcon->setIcon(QIcon::fromTheme("headphones"));
     trayIcon->setToolTip("HeadsetControl");
     ledOn->setEnabled(false);
     ledOff->setEnabled(false);
@@ -342,15 +375,21 @@ void MainWindow::resetGUI()
 //Utility Section
 void MainWindow::sendAppNotification(const QString &title,
                                      const QString &description,
-                                     const QIcon &icon)
+                                     const QString &icon)
 {
-    trayIcon->showMessage(title, description, icon);
+    trayIcon->showMessage(title, description, QIcon::fromTheme(icon));
 }
 
 //Devices Managing Section
 void MainWindow::loadDevice()
 {
     resetGUI();
+
+    if (firstRun){
+        notified = true;
+        firstRun = false;
+    }
+
 
     selectedDevice = API.getSelectedDevice();
     if (selectedDevice == nullptr) {
@@ -540,16 +579,25 @@ QList<Device *> MainWindow::getSavedDevices()
 
 bool MainWindow::updateSelectedDevice()
 {
+    QString lastStatus = "";
+    if (selectedDevice != nullptr){
+        lastStatus = selectedDevice->battery.status;
+    }
+
     API.updateSelectedDevice();
-    if (API.getSelectedDevice() == nullptr) {
+    bool stillTheSame = API.getSelectedDevice() != nullptr;
+    if (stillTheSame) {
         API.setSelectedDevice("0","0");
         selectedDevice = API.getSelectedDevice();
-        return false;
+    }
+
+    if(selectedDevice != nullptr && lastStatus != selectedDevice->battery.status){
+        notified = false;
     }
 
     setBatteryStatus();
     setChatmixStatus();
-    return true;
+    return stillTheSame;
 }
 
 //Update GUI Section
@@ -593,7 +641,7 @@ void MainWindow::setBatteryStatus()
         if (settings.notificationHeadsetDisconnected && !notified) {
             sendAppNotification(tr("Headset Disconnected"),
                                 tr("Your headset is disconnected or has been turned off"),
-                                QIcon("headphones"));
+                                "headphones");
             if (settings.audioNotification) {
                 API.playNotificationSound(0);
             }
@@ -610,7 +658,7 @@ void MainWindow::setBatteryStatus()
             if (settings.notificationBatteryFull && !notified) {
                 sendAppNotification(tr("Battery Charged!"),
                                     tr("The battery has been charged to 100%"),
-                                    QIcon("battery-level-full"));
+                                    "battery-level-full");
                 notified = true;
             }
         } else {
@@ -633,14 +681,23 @@ void MainWindow::setBatteryStatus()
             if (settings.notificationBatteryLow && !notified) {
                 sendAppNotification(tr("Battery Alert!"),
                                     tr("The battery of your headset is running low"),
-                                    QIcon("battery-low"));
+                                    "battery-low");
                 notified = true;
             }
         }
     } else {
-        ui->batteryPercentage->setText(tr("Error getting battery info: ") + status + "(" + level + ")");
-        trayIcon->setToolTip(tr("HeadsetControl \r\nBattery: Error - ") + status + "(" + level + ")");
+        ui->batteryPercentage->setText(tr("Error getting battery info: ") + level);
+        trayIcon->setToolTip(tr("HeadsetControl \r\nBattery: Error ") + level);
         changeTrayIconTo("battery-error");
+        if (settings.notificationHeadsetDisconnected && !notified) {
+            sendAppNotification(tr("Headset Error"),
+                                tr("Error getting battery info, headset might be turned off"),
+                                "battery-error");
+            if (settings.audioNotification) {
+                API.playNotificationSound(0);
+            }
+            notified = true;
+        }
     }
 }
 
@@ -777,6 +834,10 @@ void MainWindow::editProgramSetting()
         settings = settingsW->getSettings();
         saveSettingstoFile(settings, PROGRAM_SETTINGS_FILEPATH);
         timerGUI->setInterval(settings.msecUpdateIntervalTime);
+        if(settings.commandExe != ""){
+            timerCommand->stop();
+            timerCommand->start(settings.msecCommandIntervalTime);
+        }
         updateStyle();
     }
     delete (settingsW);

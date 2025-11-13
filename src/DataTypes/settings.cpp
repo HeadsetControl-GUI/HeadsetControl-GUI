@@ -43,6 +43,15 @@ Settings loadSettingsFromFile(const QString &filePath)
         if (json.contains("styleName")) {
             s.styleName = json["styleName"].toString();
         }
+        if (json.contains("commandExe")) {
+            s.commandExe = json["commandExe"].toString();
+        }
+        if (json.contains("commandArgs")) {
+            s.commandArgs = json["commandArgs"].toString();
+        }
+        if (json.contains("msecCommandIntervalTime")) {
+            s.msecCommandIntervalTime = json["msecCommandIntervalTime"].toInt();
+        }
         if (json.contains("lastSelectedVendorID")) {
             s.lastSelectedVendorID = json["lastSelectedVendorID"].toString();
         }
@@ -67,6 +76,9 @@ void saveSettingstoFile(const Settings &settings, const QString &filePath)
     json["batteryLowThreshold"] = settings.batteryLowThreshold;
     json["msecUpdateIntervalTime"] = settings.msecUpdateIntervalTime;
     json["styleName"] = settings.styleName;
+    json["commandExe"] = settings.commandExe;
+    json["commandArgs"] = settings.commandArgs;
+    json["msecCommandIntervalTime"] = settings.msecCommandIntervalTime;
     json["lastSelectedVendorID"] = settings.lastSelectedVendorID;
     json["lastSelectedProductID"] = settings.lastSelectedProductID;
 

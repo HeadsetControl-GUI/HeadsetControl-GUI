@@ -34,6 +34,10 @@ public:
 
     QString styleName = "Default";
 
+    QString commandExe = "";
+    QString commandArgs = "{chatmix}";
+    int msecCommandIntervalTime = 1000;
+
     QString lastSelectedVendorID = "", lastSelectedProductID = "";
 };
 

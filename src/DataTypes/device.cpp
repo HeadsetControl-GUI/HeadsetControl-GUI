@@ -38,7 +38,7 @@ Device::Device(const QJsonObject &jsonObj, QString jsonData)
     id_product = jsonObj["id_product"].toString();
 
     QJsonArray caps = jsonObj["capabilities"].toArray();
-    for (const QJsonValue &value : caps) {
+    for (const QJsonValue &value : std::as_const(caps)) {
         capabilities.insert(value.toString());
     }
     if (capabilities.contains("CAP_BATTERY_STATUS")) {
@@ -64,7 +64,7 @@ Device::Device(const QJsonObject &jsonObj, QString jsonData)
                     preset.name = presetName;
 
                     QJsonArray valuesArray = equalizerPresets[presetName].toArray();
-                    for (const QJsonValue &value : valuesArray) {
+                    for (const QJsonValue &value : std::as_const(valuesArray)) {
                         preset.values.append(value.toDouble());
                     }
 
@@ -176,7 +176,7 @@ Device *Device::fromJson(
     newDev->equalizer_preset = json["equalizer_preset"].toInt();
 
     QJsonArray curveArray = json["equalizer_curve"].toArray();
-    for (const auto &value : curveArray) {
+    for (const auto &value : std::as_const(curveArray)) {
         newDev->equalizer_curve.append(value.toDouble());
     }
 
@@ -233,7 +233,7 @@ QList<Device *> deserializeDevices(const QString &filePath)
         QJsonDocument doc = QJsonDocument::fromJson(data);
         QJsonArray jsonArray = doc.array();
 
-        for (const auto &value : jsonArray) {
+        for (const auto &value : std::as_const(jsonArray)) {
             Device *device = Device::fromJson(value.toObject());
             devices.append(device);
         }

@@ -34,7 +34,8 @@ public:
 
 private:
     bool firstShow = true;
-    bool notified = false;
+    bool firstRun = true;
+    bool notified = true;
 
     QString defaultStyle;
 
@@ -45,6 +46,9 @@ private:
     QAction *ledOn;
     QAction *ledOff;
     QTimer *timerGUI;
+    QTimer *timerCommand;
+
+    void sendCommand();
 
     Settings settings;
 
@@ -77,7 +81,7 @@ private:
     void showEvent(QShowEvent *event);
 
     //Utility
-    void sendAppNotification(const QString &title, const QString &description, const QIcon &icon);
+    void sendAppNotification(const QString &title, const QString &description, const QString &icon);
 
     //Devices Managing Section
     bool updateSelectedDevice();

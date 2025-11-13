@@ -4,7 +4,7 @@
 #include <QTranslator>
 
 const QString APP_NAME = "HeadsetControl-GUI";
-const QString GUI_VERSION = "0.19.5";
+const QString GUI_VERSION = "0.20.0";
 
 int main(int argc, char *argv[])
 {

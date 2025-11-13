@@ -26,6 +26,8 @@ private:
     void loadStyles();
     void saveStyle();
     void removeStyle();
+    void setCommandExe();
+    void clearCommandExe();
 };
 
 #endif // SETTINGSWINDOW_H
