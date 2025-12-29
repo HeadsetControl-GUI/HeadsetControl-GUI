@@ -429,7 +429,7 @@ Battery: Charging - </source>
     </message>
     <message>
         <location filename="../../UI/mainwindow.cpp" line="668"/>
-        <source>% - Descharging</source>
+        <source>% - Discharging</source>
         <translation></translation>
     </message>
     <message>
