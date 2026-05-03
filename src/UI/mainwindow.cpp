@@ -864,7 +864,12 @@ void MainWindow::checkForUpdates(bool firstStart)
 
     QString s1 = tr("up-to date ") + "<a href=\"" + updateUrl + "\">" + hcVersion + "</a>";
     QString s2 = tr("up-to date ") + "<a href=\"" + guiUpdateUrl + "\">" + guiVersion + "</a>";
-    if (!(v1 == "") && v1 != hcVersion && hcVersion != "continuous-modified") {
+    QString hcCleanVersion = hcVersion;
+    if (hcCleanVersion.endsWith("-modified")) {
+        hcCleanVersion.chop(9);
+    }
+
+    if (!(v1 == "") && v1 != hcCleanVersion && hcCleanVersion != "continuous") {
         s1 = tr("Available version")
              + " -> <a href=\"" + updateUrl + "\">"
              + v1 + "</a>";

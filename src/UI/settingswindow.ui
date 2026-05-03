@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>354</width>
-    <height>464</height>
+    <width>467</width>
+    <height>509</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,6 +56,46 @@
     </widget>
    </item>
    <item>
+    <widget class="QFrame" name="updateFrame">
+     <property name="frameShape">
+      <enum>QFrame::Shape::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Shadow::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_update">
+      <item>
+       <widget class="QLabel" name="updateChannelLabel">
+        <property name="text">
+         <string>HeadsetControl Update Channel:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="updateChannelComboBox">
+        <item>
+         <property name="text">
+          <string>latest</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>continuous</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="updateHeadsetControlPushButton">
+        <property name="text">
+         <string>Update HeadsetControl</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QFrame" name="frame_2">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
@@ -70,41 +110,15 @@
       <enum>QFrame::Shadow::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="batteryfullnotificationCheckBox">
-        <property name="layoutDirection">
-         <enum>Qt::LayoutDirection::RightToLeft</enum>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QCheckBox" name="enableaudioNotificationCheckBox">
-        <property name="layoutDirection">
-         <enum>Qt::LayoutDirection::RightToLeft</enum>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="batteryfullnotificationLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
+       <widget class="QLabel" name="headsetdisconnectednotificationLabel">
         <property name="text">
-         <string>Battery full notification:</string>
+         <string>Headset disconnected notification:</string>
         </property>
        </widget>
       </item>
       <item row="4" column="0">
-       <widget class="QLabel" name="enableaudionotificationLabel">
+       <widget class="QLabel" name="batterylowtresholdLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -112,24 +126,11 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Enable audio notifications:</string>
+         <string>Battery low threshold:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="battertlownotificationLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Battery low notification:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
+      <item row="4" column="1">
        <widget class="QSpinBox" name="batterylowtresholdSpinBox">
         <property name="minimumSize">
          <size>
@@ -151,7 +152,66 @@
         </property>
        </widget>
       </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="enableaudionotificationLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Enable audio notifications:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="battertlownotificationLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Battery low notification:</string>
+        </property>
+       </widget>
+      </item>
       <item row="2" column="1">
+       <widget class="QCheckBox" name="batteryfullnotificationCheckBox">
+        <property name="layoutDirection">
+         <enum>Qt::LayoutDirection::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="batteryfullnotificationLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Battery full notification:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QCheckBox" name="enableaudioNotificationCheckBox">
+        <property name="layoutDirection">
+         <enum>Qt::LayoutDirection::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
        <widget class="QCheckBox" name="batterylownotificationCheckBox">
         <property name="layoutDirection">
          <enum>Qt::LayoutDirection::RightToLeft</enum>
@@ -161,27 +221,7 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="batterylowtresholdLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Battery low threshold:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="headsetdisconnectednotificationLabel">
-        <property name="text">
-         <string>Headset disconnected notification:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
+      <item row="1" column="1">
        <widget class="QCheckBox" name="headsetdisconnectednotificationCheckBox">
         <property name="layoutDirection">
          <enum>Qt::LayoutDirection::RightToLeft</enum>
@@ -398,46 +438,6 @@ DON'T PUT TOO LOW VALUES</string>
          </widget>
         </item>
        </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QFrame" name="updateFrame">
-     <property name="frameShape">
-      <enum>QFrame::Shape::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Shadow::Raised</enum>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_update">
-      <item>
-       <widget class="QLabel" name="updateChannelLabel">
-        <property name="text">
-         <string>HeadsetControl Update Channel:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="updateChannelComboBox">
-        <item>
-         <property name="text">
-          <string>latest</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>continuous</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="updateHeadsetControlPushButton">
-        <property name="text">
-         <string>Update HeadsetControl</string>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>
