@@ -8,6 +8,7 @@
 #include <QNetworkReply>
 #include <QProcess>
 #include <QStandardPaths>
+#include <QRegularExpression>
 
 QString getLatestGitHubReleaseVersion(const QString &owner, const QString &repo)
 {
@@ -27,6 +28,36 @@ QString getLatestGitHubReleaseVersion(const QString &owner, const QString &repo)
         QString latestVersion = jsonObj.value("tag_name").toString();
         reply->deleteLater();
         return latestVersion;
+    } else {
+        qDebug() << "Error:" << reply->errorString();
+        reply->deleteLater();
+        return QString("0.0.0");
+    }
+}
+
+QString getContinuousGitHubReleaseVersion(const QString &owner, const QString &repo)
+{
+    QEventLoop loop;
+    QNetworkAccessManager manager;
+    QNetworkRequest request(
+        QUrl(QString("https://api.github.com/repos/%1/%2/releases/tags/continuous").arg(owner, repo)));
+    request.setHeader(QNetworkRequest::UserAgentHeader, "Mozilla/5.0");
+
+    QNetworkReply *reply = manager.get(request);
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    if (reply->error() == QNetworkReply::NoError) {
+        QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+        QJsonObject jsonObj = doc.object();
+        QString body = jsonObj.value("body").toString();
+        QRegularExpression rx("(continuous-\\d+-g[a-f0-9]+)");
+        QRegularExpressionMatch match = rx.match(body);
+        reply->deleteLater();
+        if (match.hasMatch()) {
+            return match.captured(1);
+        }
+        return jsonObj.value("tag_name").toString();
     } else {
         qDebug() << "Error:" << reply->errorString();
         reply->deleteLater();

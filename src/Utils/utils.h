@@ -4,6 +4,7 @@
 #include <QString>
 
 QString getLatestGitHubReleaseVersion(const QString &owner, const QString &repo);
+QString getContinuousGitHubReleaseVersion(const QString &owner, const QString &repo);
 
 bool fileExists(const QString &filepath);
 

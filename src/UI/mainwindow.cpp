@@ -849,22 +849,29 @@ void MainWindow::checkForUpdates(bool firstStart)
 
     const QString &hcVersion = API.getVersion();
     const QString &guiVersion = qApp->applicationVersion();
-    QString v1 = getLatestGitHubReleaseVersion("Sapd", "HeadsetControl");
+    QString v1;
+    if (hcVersion.startsWith("continuous")) {
+        v1 = getContinuousGitHubReleaseVersion("Sapd", "HeadsetControl");
+    } else {
+        v1 = getLatestGitHubReleaseVersion("Sapd", "HeadsetControl");
+    }
     QString v2 = getLatestGitHubReleaseVersion("HeadsetControl-GUI", "HeadsetControl-GUI");
-    QString s1 = tr("up-to date v") + hcVersion;
-    QString s2 = tr("up-to date v") + guiVersion;
+    QString updateUrl = hcVersion.startsWith("continuous") 
+        ? "https://github.com/Sapd/HeadsetControl/releases/tag/continuous"
+        : "https://github.com/Sapd/HeadsetControl/releases/latest";
+    QString guiUpdateUrl = "https://github.com/HeadsetControl-GUI/HeadsetControl-GUI/releases/latest";
+
+    QString s1 = tr("up-to date ") + "<a href=\"" + updateUrl + "\">" + hcVersion + "</a>";
+    QString s2 = tr("up-to date ") + "<a href=\"" + guiUpdateUrl + "\">" + guiVersion + "</a>";
     if (!(v1 == "") && v1 != hcVersion && hcVersion != "continuous-modified") {
-        s1 = tr("Different version")
-             + " -> <a "
-               "href=\"https://github.com/Sapd/HeadsetControl/releases/latest\">"
+        s1 = tr("Available version")
+             + " -> <a href=\"" + updateUrl + "\">"
              + v1 + "</a>";
         needsUpdate = true;
     }
     if (!(v2 == "") && v2 != guiVersion) {
-        s2 = tr("Different version")
-             + " -> <a "
-               "href=\"https://github.com/HeadsetControl-GUI/HeadsetControl-GUI/releases/"
-               "latest\">"
+        s2 = tr("Available version")
+             + " -> <a href=\"" + guiUpdateUrl + "\">"
              + v2 + "</a>";
         needsUpdate = true;
     }
