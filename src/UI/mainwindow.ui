@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>488</width>
-    <height>843</height>
+    <height>873</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -88,7 +88,20 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_26">
+        <layout class="QVBoxLayout" name="verticalLayout_10">
+         <item>
+          <widget class="QPushButton" name="downloadHeadsetControlPushButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Download HeadsetControl</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QPushButton" name="openfolderPushButton">
            <property name="sizePolicy">
@@ -124,7 +137,7 @@
       <property name="frameShadow">
        <enum>QFrame::Shadow::Raised</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_19">
+      <layout class="QVBoxLayout" name="verticalLayout_notSupported">
        <item>
         <widget class="QLabel" name="notSupportedLabel">
          <property name="sizePolicy">
@@ -155,6 +168,17 @@
           <bool>true</bool>
          </property>
         </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_refresh">
+         <item>
+          <widget class="QPushButton" name="refreshPushButton">
+           <property name="text">
+            <string>Refresh Devices</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -1941,7 +1965,7 @@ Model:</string>
      <x>0</x>
      <y>0</y>
      <width>488</width>
-     <height>25</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

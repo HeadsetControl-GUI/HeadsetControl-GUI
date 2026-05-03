@@ -129,6 +129,12 @@ void MainWindow::bindEvents()
     connect(ui->openfolderPushButton, &QPushButton::clicked, this, [=]() {
         openFileExplorer(PROGRAM_APP_DIRECTORY);
     });
+    connect(ui->downloadHeadsetControlPushButton, &QPushButton::clicked, this, [=]() {
+        updateHeadsetControl(settings.updateChannel);
+    });
+    connect(ui->refreshPushButton, &QPushButton::clicked, this, [=]() {
+        loadDevice();
+    });
 
     // Other Section
     connect(ui->onlightButton, &QPushButton::clicked, this, [=]() {
