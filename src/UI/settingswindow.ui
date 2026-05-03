@@ -403,6 +403,46 @@ DON'T PUT TOO LOW VALUES</string>
     </widget>
    </item>
    <item>
+    <widget class="QFrame" name="updateFrame">
+     <property name="frameShape">
+      <enum>QFrame::Shape::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Shadow::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_update">
+      <item>
+       <widget class="QLabel" name="updateChannelLabel">
+        <property name="text">
+         <string>HeadsetControl Update Channel:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="updateChannelComboBox">
+        <item>
+         <property name="text">
+          <string>latest</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>continuous</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="updateHeadsetControlPushButton">
+        <property name="text">
+         <string>Update HeadsetControl</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Orientation::Horizontal</enum>

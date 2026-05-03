@@ -38,6 +38,8 @@ public:
     QString commandArgs = "{chatmix}";
     int msecCommandIntervalTime = 1000;
 
+    QString updateChannel = "latest"; // can be "latest" or "continuous"
+
     QString lastSelectedVendorID = "", lastSelectedProductID = "";
 };
 

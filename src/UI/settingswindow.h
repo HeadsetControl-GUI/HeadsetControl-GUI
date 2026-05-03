@@ -19,6 +19,9 @@ public:
 
     Settings getSettings();
 
+signals:
+    void requestUpdate(QString channel);
+
 private:
     Ui::settingswindow *ui;
 

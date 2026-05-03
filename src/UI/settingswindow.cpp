@@ -44,6 +44,11 @@ SettingsWindow::SettingsWindow(const Settings &programSettings, QWidget *parent)
     ui->commandargumentsValue->setText(programSettings.commandArgs);
     ui->commandintervaltimeDoubleSpinBox->setValue((double) programSettings.msecCommandIntervalTime
                                          / 1000);
+
+    ui->updateChannelComboBox->setCurrentText(programSettings.updateChannel);
+    connect(ui->updateHeadsetControlPushButton, &QPushButton::clicked, this, [this]() {
+        emit requestUpdate(ui->updateChannelComboBox->currentText());
+    });
 }
 
 Settings SettingsWindow::getSettings()
@@ -60,6 +65,7 @@ Settings SettingsWindow::getSettings()
     settings.commandExe = ui->commandexeLabel->text();
     settings.commandArgs = ui->commandargumentsValue->text();
     settings.msecCommandIntervalTime = ui->commandintervaltimeDoubleSpinBox->value() * 1000;
+    settings.updateChannel = ui->updateChannelComboBox->currentText();
 
     return settings;
 }

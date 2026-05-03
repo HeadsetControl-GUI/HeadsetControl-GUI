@@ -8,6 +8,8 @@ QString getContinuousGitHubReleaseVersion(const QString &owner, const QString &r
 
 bool fileExists(const QString &filepath);
 
+bool downloadAndExtractHeadsetControl(const QString &channel, const QString &destDir);
+
 bool openFileExplorer(const QString &path);
 
 bool setOSRunOnStartup(bool enable);

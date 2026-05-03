@@ -52,6 +52,9 @@ Settings loadSettingsFromFile(const QString &filePath)
         if (json.contains("msecCommandIntervalTime")) {
             s.msecCommandIntervalTime = json["msecCommandIntervalTime"].toInt();
         }
+        if (json.contains("updateChannel")) {
+            s.updateChannel = json["updateChannel"].toString();
+        }
         if (json.contains("lastSelectedVendorID")) {
             s.lastSelectedVendorID = json["lastSelectedVendorID"].toString();
         }
@@ -79,6 +82,7 @@ void saveSettingstoFile(const Settings &settings, const QString &filePath)
     json["commandExe"] = settings.commandExe;
     json["commandArgs"] = settings.commandArgs;
     json["msecCommandIntervalTime"] = settings.msecCommandIntervalTime;
+    json["updateChannel"] = settings.updateChannel;
     json["lastSelectedVendorID"] = settings.lastSelectedVendorID;
     json["lastSelectedProductID"] = settings.lastSelectedProductID;
 

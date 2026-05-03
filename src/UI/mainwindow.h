@@ -118,6 +118,7 @@ private slots:
     // Tool Bar Events
     void selectDevice();
     void editProgramSetting();
+    void updateHeadsetControl(QString channel);
     void checkForUpdates(bool firstStart = false);
     void showAbout();
     void showCredits();

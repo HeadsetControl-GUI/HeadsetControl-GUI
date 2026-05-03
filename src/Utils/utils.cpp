@@ -153,3 +153,38 @@ bool setOSRunOnStartup(bool enable)
     return false;
 #endif
 }
+
+bool downloadAndExtractHeadsetControl(const QString &channel, const QString &destDir)
+{
+    QString url;
+#ifdef Q_OS_WIN
+    if (channel == "continuous") {
+        url = "https://github.com/Sapd/HeadsetControl/releases/download/continuous/headsetcontrol-windows-x86_64.exe";
+        QString command = QString("powershell -Command \"Invoke-WebRequest -Uri '%1' -OutFile '%2\\headsetcontrol.exe'\"").arg(url, destDir);
+        QProcess process;
+        process.startCommand(command);
+        process.waitForFinished(-1);
+        return process.exitCode() == 0;
+    } else {
+        url = "https://github.com/Sapd/HeadsetControl/releases/latest/download/headsetcontrol-windows-x86_64.zip";
+        QString command = QString("powershell -Command \"Invoke-WebRequest -Uri '%1' -OutFile '%2\\hc.zip'; if (Test-Path '%2\\hc.zip') { Expand-Archive -Path '%2\\hc.zip' -DestinationPath '%2' -Force; Remove-Item '%2\\hc.zip' } else { exit 1 }\"").arg(url, destDir);
+        QProcess process;
+        process.startCommand(command);
+        process.waitForFinished(-1);
+        return process.exitCode() == 0;
+    }
+#else
+    if (channel == "continuous") {
+        url = "https://github.com/Sapd/HeadsetControl/releases/download/continuous/headsetcontrol-linux-x86_64.zip";
+    } else {
+        url = "https://github.com/Sapd/HeadsetControl/releases/latest/download/headsetcontrol-linux-x86_64.zip";
+    }
+    
+    QString command = QString("bash -c \"wget -q -O '%2/hc.zip' '%1' && unzip -o '%2/hc.zip' -d '%2' && rm '%2/hc.zip'\"").arg(url, destDir);
+    
+    QProcess process;
+    process.startCommand(command);
+    process.waitForFinished(-1);
+    return process.exitCode() == 0;
+#endif
+}

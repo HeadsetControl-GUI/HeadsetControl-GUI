@@ -830,6 +830,7 @@ void MainWindow::selectDevice()
 void MainWindow::editProgramSetting()
 {
     SettingsWindow *settingsW = new SettingsWindow(settings, this);
+    connect(settingsW, &SettingsWindow::requestUpdate, this, &MainWindow::updateHeadsetControl);
     if (settingsW->exec() == QDialog::Accepted) {
         settings = settingsW->getSettings();
         saveSettingstoFile(settings, PROGRAM_SETTINGS_FILEPATH);
@@ -917,4 +918,21 @@ void MainWindow::showCredits()
     dialogWindow->exec();
 
     delete (dialogWindow);
+}
+
+#include <QMessageBox>
+void MainWindow::updateHeadsetControl(QString channel)
+{
+    QString dirPath = QCoreApplication::applicationDirPath();
+    
+    QMessageBox::information(this, "Updating", "Downloading and unpacking HeadsetControl " + channel + ". GUI might freeze.", QMessageBox::Ok);
+    
+    if (downloadAndExtractHeadsetControl(channel, dirPath)) {
+        QMessageBox::information(this, "Success", "HeadsetControl updated successfully!");
+        timerGUI->stop();
+        loadDevice();
+        timerGUI->start();
+    } else {
+        QMessageBox::warning(this, "Error", "Failed to update HeadsetControl.");
+    }
 }
