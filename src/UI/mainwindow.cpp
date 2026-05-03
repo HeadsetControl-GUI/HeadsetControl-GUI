@@ -849,27 +849,23 @@ void MainWindow::checkForUpdates(bool firstStart)
 
     const QString &hcVersion = API.getVersion();
     const QString &guiVersion = qApp->applicationVersion();
-    const QVersionNumber &local_hc = QVersionNumber::fromString(hcVersion);
-    const QVersionNumber local_gui = QVersionNumber::fromString(guiVersion);
     QString v1 = getLatestGitHubReleaseVersion("Sapd", "HeadsetControl");
-    QString v2 = getLatestGitHubReleaseVersion("LeoKlaus", "HeadsetControl-GUI");
-    QVersionNumber remote_hc = QVersionNumber::fromString(v1);
-    QVersionNumber remote_gui = QVersionNumber::fromString(v2);
+    QString v2 = getLatestGitHubReleaseVersion("HeadsetControl-GUI", "HeadsetControl-GUI");
     QString s1 = tr("up-to date v") + hcVersion;
     QString s2 = tr("up-to date v") + guiVersion;
-    if (!(v1 == "") && remote_hc > local_hc && hcVersion != "continuous-modified") {
-        s1 = tr("Newer version")
+    if (!(v1 == "") && v1 != hcVersion && hcVersion != "continuous-modified") {
+        s1 = tr("Different version")
              + " -> <a "
                "href=\"https://github.com/Sapd/HeadsetControl/releases/latest\">"
-             + remote_hc.toString() + "</a>";
+             + v1 + "</a>";
         needsUpdate = true;
     }
-    if (!(v2 == "") && remote_gui > local_gui) {
-        s2 = tr("Newer version")
+    if (!(v2 == "") && v2 != guiVersion) {
+        s2 = tr("Different version")
              + " -> <a "
-               "href=\"https://github.com/LeoKlaus/HeadsetControl-GUI/releases/"
+               "href=\"https://github.com/HeadsetControl-GUI/HeadsetControl-GUI/releases/"
                "latest\">"
-             + remote_gui.toString() + "</a>";
+             + v2 + "</a>";
         needsUpdate = true;
     }
 
