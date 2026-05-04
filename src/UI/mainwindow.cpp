@@ -944,6 +944,7 @@ void MainWindow::updateHeadsetControl(QString channel)
         loadDevice();
         timerGUI->start();
         checkForUpdates();
+        rescaleAndMoveWindow();
     } else {
         QMessageBox::warning(this, "Error", "Failed to update HeadsetControl.");
     }

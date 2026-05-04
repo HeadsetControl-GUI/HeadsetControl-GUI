@@ -136,9 +136,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Submit package to Windows Package Manager Community Repository
-      uses: michidk/winget-updater@v1
+      uses: vedantmgoyal9/winget-releaser@v2
       with:
-        komac-token: ${{ secrets.WINGET_DEPLOY_TOKEN }}
         identifier: "LeoKlaus.HeadsetControl-GUI"
-        repo: "LeoKlaus/HeadsetControl-GUI"
-        url: "https://github.com/LeoKlaus/HeadsetControl-GUI/releases/download/{VERSION}/HeadsetControl-GUI_windows_x64.zip"
+        release-tag: ${{ inputs.version }}
+        installers-regex: "\\.zip$"
+        token: ${{ secrets.WINGET_DEPLOY_TOKEN }}
