@@ -10,9 +10,11 @@
 
 #include <QFile>
 #include <QFileDialog>
+#include <QDesktopServices>
 #include <QProcess>
 #include <QScreen>
 #include <QStyleHints>
+#include <QUrl>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -134,6 +136,13 @@ void MainWindow::bindEvents()
     });
     connect(ui->refreshPushButton, &QPushButton::clicked, this, [=]() {
         loadDevice();
+    });
+    connect(ui->headsetControlUpdatePushButton, &QPushButton::clicked, this, [=]() {
+        updateHeadsetControl(settings.updateChannel);
+    });
+    connect(ui->headsetControlGuiUpdatePushButton, &QPushButton::clicked, this, [=]() {
+        QDesktopServices::openUrl(
+            QUrl("https://github.com/HeadsetControl-GUI/HeadsetControl-GUI/releases/latest"));
     });
 
     // Other Section
@@ -304,7 +313,7 @@ void MainWindow::showEvent(QShowEvent *event)
     QMainWindow::showEvent(event);
     rescaleAndMoveWindow();
     if (firstShow) {
-        checkForUpdates(firstShow);
+        checkForUpdates();
         firstShow = false;
     }
 }
@@ -850,9 +859,10 @@ void MainWindow::editProgramSetting()
     delete (settingsW);
 }
 
-void MainWindow::checkForUpdates(bool firstStart)
+void MainWindow::checkForUpdates()
 {
-    bool needsUpdate = false;
+    bool needsHeadsetControlUpdate = false;
+    bool needsGuiUpdate = false;
 
     const QString &hcVersion = API.getVersion();
     const QString &guiVersion = qApp->applicationVersion();
@@ -863,39 +873,29 @@ void MainWindow::checkForUpdates(bool firstStart)
         v1 = getLatestGitHubReleaseVersion("Sapd", "HeadsetControl");
     }
     QString v2 = getLatestGitHubReleaseVersion("HeadsetControl-GUI", "HeadsetControl-GUI");
-    QString updateUrl = hcVersion.startsWith("continuous") 
-        ? "https://github.com/Sapd/HeadsetControl/releases/tag/continuous"
-        : "https://github.com/Sapd/HeadsetControl/releases/latest";
-    QString guiUpdateUrl = "https://github.com/HeadsetControl-GUI/HeadsetControl-GUI/releases/latest";
 
-    QString s1 = tr("up-to date ") + "<a href=\"" + updateUrl + "\">" + hcVersion + "</a>";
-    QString s2 = tr("up-to date ") + "<a href=\"" + guiUpdateUrl + "\">" + guiVersion + "</a>";
     QString hcCleanVersion = hcVersion;
     if (hcCleanVersion.endsWith("-modified")) {
         hcCleanVersion.chop(9);
     }
 
     if (!(v1 == "") && v1 != hcCleanVersion && hcCleanVersion != "continuous") {
-        s1 = tr("Available version")
-             + " -> <a href=\"" + updateUrl + "\">"
-             + v1 + "</a>";
-        needsUpdate = true;
+        needsHeadsetControlUpdate = true;
     }
     if (!(v2 == "") && v2 != guiVersion) {
-        s2 = tr("Available version")
-             + " -> <a href=\"" + guiUpdateUrl + "\">"
-             + v2 + "</a>";
-        needsUpdate = true;
+        needsGuiUpdate = true;
     }
 
-    if ((needsUpdate && firstStart) || !firstStart) {
-        DialogInfo *dialogWindow = new DialogInfo(this);
-        dialogWindow->setTitle(tr("Check for updates"));
-        QString text = "HeadesetControl: " + s1 + "<br/>HeadesetControl-GUI: " + s2;
-        dialogWindow->setLabel(text);
-
-        dialogWindow->exec();
-        delete (dialogWindow);
+    ui->headsetControlUpdateFrame->setVisible(needsHeadsetControlUpdate || needsGuiUpdate);
+    ui->headsetControlUpdateRow->setVisible(needsHeadsetControlUpdate);
+    ui->headsetControlGuiUpdateRow->setVisible(needsGuiUpdate);
+    if (needsHeadsetControlUpdate) {
+        ui->headsetControlUpdateLabel->setText(
+            tr("HeadsetControl update available: ") + v1 + " (" + hcCleanVersion + ")");
+    }
+    if (needsGuiUpdate) {
+        ui->headsetControlGuiUpdateLabel->setText(
+            tr("HeadsetControl-GUI update available: ") + v2 + " (" + guiVersion + ")");
     }
 }
 
@@ -943,6 +943,7 @@ void MainWindow::updateHeadsetControl(QString channel)
         timerGUI->stop();
         loadDevice();
         timerGUI->start();
+        checkForUpdates();
     } else {
         QMessageBox::warning(this, "Error", "Failed to update HeadsetControl.");
     }

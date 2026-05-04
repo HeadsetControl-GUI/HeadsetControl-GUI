@@ -51,6 +51,61 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
+     <widget class="QFrame" name="headsetControlUpdateFrame">
+      <property name="visible">
+       <bool>false</bool>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Shape::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Shadow::Raised</enum>
+      </property>
+    <layout class="QVBoxLayout" name="verticalLayout_updateBanner">
+     <item>
+      <widget class="QWidget" name="headsetControlUpdateRow">
+       <layout class="QHBoxLayout" name="horizontalLayout_updateHeadsetControl">
+        <item>
+         <widget class="QLabel" name="headsetControlUpdateLabel">
+        <property name="text">
+         <string>HeadsetControl update available.</string>
+        </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="headsetControlUpdatePushButton">
+        <property name="text">
+         <string>Update</string>
+        </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="headsetControlGuiUpdateRow">
+       <layout class="QHBoxLayout" name="horizontalLayout_updateGui">
+        <item>
+         <widget class="QLabel" name="headsetControlGuiUpdateLabel">
+        <property name="text">
+         <string>HeadsetControl-GUI update available.</string>
+        </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="headsetControlGuiUpdatePushButton">
+        <property name="text">
+         <string>Open Release</string>
+        </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+     </widget>
+    </item>
+    <item>
      <widget class="QFrame" name="missingheadsetcontrolFrame">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">

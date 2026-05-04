@@ -119,7 +119,7 @@ private slots:
     void selectDevice();
     void editProgramSetting();
     void updateHeadsetControl(QString channel);
-    void checkForUpdates(bool firstStart = false);
+    void checkForUpdates();
     void showAbout();
     void showCredits();
 };
