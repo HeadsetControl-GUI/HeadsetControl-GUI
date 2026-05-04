@@ -47,7 +47,7 @@ jobs:
             build: |
               mkdir build
               cd build
-              qmake ../HeadsetControl-GUI.pro CONFIG+=release
+              qmake ../HeadsetControl-GUI.pro CONFIG+=release GUI_VERSION_VALUE=${{ inputs.version }}
               nmake
           - os: ubuntu-latest
             os_name: linux
@@ -59,7 +59,7 @@ jobs:
             build: |
               mkdir build
               cd build
-              qmake ../HeadsetControl-GUI.pro CONFIG+=release
+              qmake ../HeadsetControl-GUI.pro CONFIG+=release GUI_VERSION_VALUE=${{ inputs.version }}
               make -j$(nproc)
     steps:
       - uses: actions/checkout@v4

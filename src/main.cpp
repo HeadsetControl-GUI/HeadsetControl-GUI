@@ -3,8 +3,12 @@
 #include <QApplication>
 #include <QTranslator>
 
+#ifndef GUI_VERSION_VALUE
+#define GUI_VERSION_VALUE "dev"
+#endif
+
 const QString APP_NAME = "HeadsetControl-GUI";
-const QString GUI_VERSION = "0.20.0";
+const QString GUI_VERSION = GUI_VERSION_VALUE;
 
 int main(int argc, char *argv[])
 {
