@@ -58,3 +58,8 @@ CONFIG += embed_translations
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+# Pass the GUI_VERSION_VALUE from qmake command line to C++ preprocessor
+!isEmpty(GUI_VERSION_VALUE) {
+    DEFINES += GUI_VERSION_VALUE=\\\"$$GUI_VERSION_VALUE\\\"
+}
