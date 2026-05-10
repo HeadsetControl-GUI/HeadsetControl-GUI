@@ -142,3 +142,4 @@ jobs:
         release-tag: ${{ inputs.version }}
         installers-regex: "\\.zip$"
         token: ${{ secrets.WINGET_DEPLOY_TOKEN }}
+        fork-user: "HeadsetControl-GUI"
