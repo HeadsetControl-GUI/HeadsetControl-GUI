@@ -15,6 +15,7 @@
 #include <QScreen>
 #include <QStyleHints>
 #include <QUrl>
+#include <QCursor>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -338,15 +339,22 @@ void MainWindow::toggleWindow()
 
 void MainWindow::minimizeWindowSize()
 {
+    resize(0, 0);
     adjustSize();
 }
 
 void MainWindow::moveToBottomRight()
 {
-    QScreen *screen = QGuiApplication::primaryScreen();
-    QSize screenSize = screen->availableSize();
-    QSize finalPosition = screenSize - sizeHint();
-    move(finalPosition.width() - 5, finalPosition.height() - 35);
+    QScreen *screen = QGuiApplication::screenAt(trayIcon->geometry().center());
+    if (!screen) {
+        screen = QGuiApplication::screenAt(QCursor::pos());
+    }
+    if (!screen) {
+        screen = QGuiApplication::primaryScreen();
+    }
+
+    QRect screenGeometry = screen->availableGeometry();
+    move(screenGeometry.right() - width() - 5, screenGeometry.bottom() - height() - 5);
 }
 
 void MainWindow::rescaleAndMoveWindow()
@@ -630,12 +638,18 @@ void MainWindow::updateGUI()
     if (!API.areApiAvailable()) {
         resetGUI();
         ui->notSupportedFrame->setHidden(true);
+        ui->headsetControlUpdateFrame->setVisible(false);
+        ui->headsetControlUpdateRow->setVisible(false);
+        ui->headsetControlGuiUpdateRow->setVisible(false);
         rescaleAndMoveWindow();
         selectedDevice = nullptr;
     } else {
         if (selectedDevice == nullptr || !updateSelectedDevice()) {
             loadDevice();
         }
+        ui->headsetControlUpdateFrame->setVisible(needsHeadsetControlUpdate || needsGuiUpdate);
+        ui->headsetControlUpdateRow->setVisible(needsHeadsetControlUpdate);
+        ui->headsetControlGuiUpdateRow->setVisible(needsGuiUpdate);
     }
 }
 
@@ -916,14 +930,10 @@ void MainWindow::editProgramSetting()
 void MainWindow::checkForUpdates()
 {
     if (!API.areApiAvailable()) {
-        ui->headsetControlUpdateFrame->setVisible(false);
-        ui->headsetControlUpdateRow->setVisible(false);
-        ui->headsetControlGuiUpdateRow->setVisible(false);
+        needsHeadsetControlUpdate = false;
+        needsGuiUpdate = false;
         return;
     }
-
-    bool needsHeadsetControlUpdate = false;
-    bool needsGuiUpdate = false;
 
     const QString &hcVersion = API.getVersion();
     const QString &guiVersion = qApp->applicationVersion();
@@ -940,23 +950,16 @@ void MainWindow::checkForUpdates()
         hcCleanVersion.chop(9);
     }
 
-    if (!(v1 == "") && v1 != hcCleanVersion && hcCleanVersion != "continuous") {
-        needsHeadsetControlUpdate = true;
-    }
-    if (!(v2 == "") && v2 != guiVersion) {
-        needsGuiUpdate = true;
-    }
+    needsHeadsetControlUpdate = (!(v1 == "") && v1 != hcCleanVersion && hcCleanVersion != "continuous");
+    needsGuiUpdate = (!(v2 == "") && v2 != guiVersion);
 
-    ui->headsetControlUpdateFrame->setVisible(needsHeadsetControlUpdate || needsGuiUpdate);
-    ui->headsetControlUpdateRow->setVisible(needsHeadsetControlUpdate);
-    ui->headsetControlGuiUpdateRow->setVisible(needsGuiUpdate);
     if (needsHeadsetControlUpdate) {
         ui->headsetControlUpdateLabel->setText(
-            tr("HeadsetControl update available: ") + v1 + " (" + hcCleanVersion + ")");
+            tr("HeadsetControl update available: ") + v1);
     }
     if (needsGuiUpdate) {
         ui->headsetControlGuiUpdateLabel->setText(
-            tr("HeadsetControl-GUI update available: ") + v2 + " (" + guiVersion + ")");
+            tr("HeadsetControl-GUI update available: ") + v2);
     }
 }
 

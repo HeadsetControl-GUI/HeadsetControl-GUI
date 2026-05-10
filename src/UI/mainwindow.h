@@ -54,6 +54,8 @@ private:
     Settings settings;
 
     int n_connected = 0, n_saved = 0;
+    bool needsHeadsetControlUpdate = false;
+    bool needsGuiUpdate = false;
 
     HeadsetControlAPI API;
     Device *selectedDevice = nullptr;
