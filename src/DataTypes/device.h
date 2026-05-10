@@ -4,6 +4,7 @@
 #include <QJsonObject>
 #include <QSet>
 #include <QString>
+#include <QDebug>
 
 class Battery
 {
@@ -34,6 +35,28 @@ public:
     int band_max = 0;
 };
 
+enum class Capability
+{
+    BATTERY_STATUS,
+    CHATMIX_STATUS,
+    EQUALIZER_PRESET,
+    EQUALIZER,
+    LIGHTS,
+    SIDETONE,
+    VOICE_PROMPTS,
+    NOTIFICATION_SOUND,
+    INACTIVE_TIME,
+    VOLUME_LIMITER,
+    ROTATE_TO_MUTE,
+    MICROPHONE_MUTE_LED_BRIGHTNESS,
+    MICROPHONE_VOLUME,
+    BT_WHEN_POWERED_ON,
+    BT_CALL_VOLUME,
+    UNKNOWN
+};
+
+QDebug operator<<(QDebug debug, const Capability &capability);
+
 class Device
 {
 public:
@@ -49,7 +72,7 @@ public:
     QString product;
     QString id_vendor;
     QString id_product;
-    QSet<QString> capabilities;
+    QSet<Capability> capabilities;
 
     // Info to get from json and display
     Battery battery;

@@ -27,6 +27,48 @@ Equalizer::Equalizer(int bands, int baseline, double step, int min, int max)
 
 Device::Device() {}
 
+Capability parseCapability(const QString& cap) {
+    if (cap == "CAP_BATTERY_STATUS") return Capability::BATTERY_STATUS;
+    if (cap == "CAP_CHATMIX_STATUS") return Capability::CHATMIX_STATUS;
+    if (cap == "CAP_EQUALIZER_PRESET") return Capability::EQUALIZER_PRESET;
+    if (cap == "CAP_EQUALIZER") return Capability::EQUALIZER;
+    if (cap == "CAP_LIGHTS") return Capability::LIGHTS;
+    if (cap == "CAP_SIDETONE") return Capability::SIDETONE;
+    if (cap == "CAP_VOICE_PROMPTS") return Capability::VOICE_PROMPTS;
+    if (cap == "CAP_NOTIFICATION_SOUND") return Capability::NOTIFICATION_SOUND;
+    if (cap == "CAP_INACTIVE_TIME") return Capability::INACTIVE_TIME;
+    if (cap == "CAP_VOLUME_LIMITER") return Capability::VOLUME_LIMITER;
+    if (cap == "CAP_ROTATE_TO_MUTE") return Capability::ROTATE_TO_MUTE;
+    if (cap == "CAP_MICROPHONE_MUTE_LED_BRIGHTNESS") return Capability::MICROPHONE_MUTE_LED_BRIGHTNESS;
+    if (cap == "CAP_MICROPHONE_VOLUME") return Capability::MICROPHONE_VOLUME;
+    if (cap == "CAP_BT_WHEN_POWERED_ON") return Capability::BT_WHEN_POWERED_ON;
+    if (cap == "CAP_BT_CALL_VOLUME") return Capability::BT_CALL_VOLUME;
+    return Capability::UNKNOWN;
+}
+
+QDebug operator<<(QDebug debug, const Capability &capability)
+{
+    switch (capability) {
+    case Capability::BATTERY_STATUS: debug << "CAP_BATTERY_STATUS"; break;
+    case Capability::CHATMIX_STATUS: debug << "CAP_CHATMIX_STATUS"; break;
+    case Capability::EQUALIZER_PRESET: debug << "CAP_EQUALIZER_PRESET"; break;
+    case Capability::EQUALIZER: debug << "CAP_EQUALIZER"; break;
+    case Capability::LIGHTS: debug << "CAP_LIGHTS"; break;
+    case Capability::SIDETONE: debug << "CAP_SIDETONE"; break;
+    case Capability::VOICE_PROMPTS: debug << "CAP_VOICE_PROMPTS"; break;
+    case Capability::NOTIFICATION_SOUND: debug << "CAP_NOTIFICATION_SOUND"; break;
+    case Capability::INACTIVE_TIME: debug << "CAP_INACTIVE_TIME"; break;
+    case Capability::VOLUME_LIMITER: debug << "CAP_VOLUME_LIMITER"; break;
+    case Capability::ROTATE_TO_MUTE: debug << "CAP_ROTATE_TO_MUTE"; break;
+    case Capability::MICROPHONE_MUTE_LED_BRIGHTNESS: debug << "CAP_MICROPHONE_MUTE_LED_BRIGHTNESS"; break;
+    case Capability::MICROPHONE_VOLUME: debug << "CAP_MICROPHONE_VOLUME"; break;
+    case Capability::BT_WHEN_POWERED_ON: debug << "CAP_BT_WHEN_POWERED_ON"; break;
+    case Capability::BT_CALL_VOLUME: debug << "CAP_BT_CALL_VOLUME"; break;
+    case Capability::UNKNOWN: debug << "CAP_UNKNOWN"; break;
+    }
+    return debug;
+}
+
 Device::Device(const QJsonObject &jsonObj, QString jsonData)
 {
     status = jsonObj["status"].toString();
@@ -39,17 +81,17 @@ Device::Device(const QJsonObject &jsonObj, QString jsonData)
 
     QJsonArray caps = jsonObj["capabilities"].toArray();
     for (const QJsonValue &value : std::as_const(caps)) {
-        capabilities.insert(value.toString());
+        capabilities.insert(parseCapability(value.toString()));
     }
-    if (capabilities.contains("CAP_BATTERY_STATUS")) {
+    if (capabilities.contains(Capability::BATTERY_STATUS)) {
         QJsonObject jEq = jsonObj["battery"].toObject();
         battery = Battery(jEq["status"].toString(), jEq["level"].toInt());
     }
-    if (capabilities.contains("CAP_CHATMIX_STATUS")) {
+    if (capabilities.contains(Capability::CHATMIX_STATUS)) {
         chatmix = jsonObj["chatmix"].toInt();
     }
 
-    if (capabilities.contains("CAP_EQUALIZER_PRESET")) {
+    if (capabilities.contains(Capability::EQUALIZER_PRESET)) {
         if (jsonObj.contains("equalizer_presets") && jsonObj["equalizer_presets"].isObject()) {
             QJsonObject equalizerPresets = jsonObj["equalizer_presets"].toObject();
 
@@ -73,7 +115,7 @@ Device::Device(const QJsonObject &jsonObj, QString jsonData)
             }
         }
     }
-    if (capabilities.contains("CAP_EQUALIZER")) {
+    if (capabilities.contains(Capability::EQUALIZER)) {
         QJsonObject jEq = jsonObj["equalizer"].toObject();
         if (!jEq.isEmpty()) {
             equalizer = Equalizer(jEq["bands"].toInt(),

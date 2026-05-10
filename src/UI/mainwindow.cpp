@@ -16,6 +16,7 @@
 #include <QStyleHints>
 #include <QUrl>
 #include <QCursor>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -435,7 +436,7 @@ void MainWindow::loadDevice()
         deleteDevices(savedDevices);
     }
 
-    QSet<QString> &capabilities = selectedDevice->capabilities;
+    QSet<Capability> &capabilities = selectedDevice->capabilities;
 
     ui->missingheadsetcontrolFrame->setHidden(true);
     ui->notSupportedFrame->setHidden(true);
@@ -448,7 +449,7 @@ void MainWindow::loadDevice()
     ui->deviceinfovalueLabel->setText(selectedDevice->device + "<br/>" + selectedDevice->vendor
                                       + "<br/>" + selectedDevice->product);
     ui->deviceinfoFrame->setHidden(false);
-    if (capabilities.contains("CAP_BATTERY_STATUS")) {
+    if (capabilities.contains(Capability::BATTERY_STATUS)) {
         ui->batteryFrame->setHidden(false);
         setBatteryStatus();
         qDebug() << "Battery:\t" << selectedDevice->battery.status
@@ -457,66 +458,66 @@ void MainWindow::loadDevice()
 
     ui->tabWidget->show();
     // Other Section
-    if (capabilities.contains("CAP_LIGHTS")) {
+    if (capabilities.contains(Capability::LIGHTS)) {
         ui->lightFrame->setHidden(false);
         ui->tabWidget->setTabEnabled(0, true);
         ledOn->setEnabled(true);
         ledOff->setEnabled(true);
     }
-    if (capabilities.contains("CAP_SIDETONE")) {
+    if (capabilities.contains(Capability::SIDETONE)) {
         ui->sidetoneFrame->setHidden(false);
         ui->tabWidget->setTabEnabled(0, true);
     }
-    if (capabilities.contains("CAP_VOICE_PROMPTS")) {
+    if (capabilities.contains(Capability::VOICE_PROMPTS)) {
         ui->voicepromptFrame->setHidden(false);
         ui->tabWidget->setTabEnabled(0, true);
     }
-    if (capabilities.contains("CAP_NOTIFICATION_SOUND")) {
+    if (capabilities.contains(Capability::NOTIFICATION_SOUND)) {
         ui->notificationFrame->setHidden(false);
         ui->tabWidget->setTabEnabled(0, true);
     }
-    if (capabilities.contains("CAP_INACTIVE_TIME")) {
+    if (capabilities.contains(Capability::INACTIVE_TIME)) {
         ui->inactivityFrame->setHidden(false);
         ui->tabWidget->setTabEnabled(0, true);
     }
-    if (capabilities.contains("CAP_CHATMIX_STATUS")) {
+    if (capabilities.contains(Capability::CHATMIX_STATUS)) {
         ui->chatmixFrame->setHidden(false);
         ui->tabWidget->setTabEnabled(0, true);
         setChatmixStatus();
         qDebug() << "Chatmix:\t" << QString::number(selectedDevice->chatmix);
     }
     // Equalizer Section
-    if (capabilities.contains("CAP_EQUALIZER_PRESET") && !selectedDevice->presets_list.empty()) {
+    if (capabilities.contains(Capability::EQUALIZER_PRESET) && !selectedDevice->presets_list.empty()) {
         ui->equalizerpresetFrame->setHidden(false);
         ui->tabWidget->setTabEnabled(1, true);
     }
-    if (capabilities.contains("CAP_EQUALIZER") && selectedDevice->equalizer.bands_number > 0) {
+    if (capabilities.contains(Capability::EQUALIZER) && selectedDevice->equalizer.bands_number > 0) {
         ui->equalizerFrame->setHidden(false);
         ui->tabWidget->setTabEnabled(1, true);
     }
-    if (capabilities.contains("CAP_VOLUME_LIMITER")) {
+    if (capabilities.contains(Capability::VOLUME_LIMITER)) {
         ui->volumelimiterFrame->setHidden(false);
         ui->tabWidget->setTabEnabled(1, true);
     }
     // Microphone Section
-    if (capabilities.contains("CAP_ROTATE_TO_MUTE")) {
+    if (capabilities.contains(Capability::ROTATE_TO_MUTE)) {
         ui->rotatetomuteFrame->setHidden(false);
         ui->tabWidget->setTabEnabled(2, true);
     }
-    if (capabilities.contains("CAP_MICROPHONE_MUTE_LED_BRIGHTNESS")) {
+    if (capabilities.contains(Capability::MICROPHONE_MUTE_LED_BRIGHTNESS)) {
         ui->muteledbrightnessFrame->setHidden(false);
         ui->tabWidget->setTabEnabled(2, true);
     }
-    if (capabilities.contains("CAP_MICROPHONE_VOLUME")) {
+    if (capabilities.contains(Capability::MICROPHONE_VOLUME)) {
         ui->micvolumeFrame->setHidden(false);
         ui->tabWidget->setTabEnabled(2, true);
     }
     // Bluetooth Section
-    if (capabilities.contains("CAP_BT_WHEN_POWERED_ON")) {
+    if (capabilities.contains(Capability::BT_WHEN_POWERED_ON)) {
         ui->btwhenonFrame->setHidden(false);
         ui->tabWidget->setTabEnabled(3, true);
     }
-    if (capabilities.contains("CAP_BT_CALL_VOLUME")) {
+    if (capabilities.contains(Capability::BT_CALL_VOLUME)) {
         ui->btcallvolumeFrame->setHidden(false);
         ui->tabWidget->setTabEnabled(3, true);
     }

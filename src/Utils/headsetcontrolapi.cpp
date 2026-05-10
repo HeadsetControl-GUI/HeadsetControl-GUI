@@ -354,7 +354,7 @@ void HeadsetControlAPI::setBluetoothCallVolume(
 }
 
 void HeadsetControlAPI::updateChatMix(){
-    if(selectedDevice->capabilities.contains("CAP_CHATMIX_STATUS")){
+    if(selectedDevice->capabilities.contains(Capability::CHATMIX_STATUS)){
         selectedDevice->chatmix = -1;
         return;
     }
