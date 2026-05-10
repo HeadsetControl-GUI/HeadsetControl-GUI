@@ -41,6 +41,11 @@ public:
     QString updateChannel = "latest"; // can be "latest" or "continuous"
 
     QString lastSelectedVendorID = "", lastSelectedProductID = "";
+
+    bool reapplyConfigEnabled = false;
+    int reapplyConfigInterval = 10;
+    bool applyOnConnect = false;
+    QStringList reapplyCapabilities;
 };
 
 Settings loadSettingsFromFile(const QString &filePath);

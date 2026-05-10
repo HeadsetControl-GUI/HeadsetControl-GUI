@@ -1,4 +1,5 @@
 #include "settings.h"
+#include "qjsonarray.h"
 
 #include <QFile>
 #include <QJsonDocument>
@@ -61,6 +62,21 @@ Settings loadSettingsFromFile(const QString &filePath)
         if (json.contains("lastSelectedProductID")) {
             s.lastSelectedProductID = json["lastSelectedProductID"].toString();
         }
+        if (json.contains("reapplyConfigEnabled")) {
+            s.reapplyConfigEnabled = json["reapplyConfigEnabled"].toBool();
+        }
+        if (json.contains("reapplyConfigInterval")) {
+            s.reapplyConfigInterval = json["reapplyConfigInterval"].toInt();
+        }
+        if (json.contains("applyOnConnect")) {
+            s.applyOnConnect = json["applyOnConnect"].toBool();
+        }
+        if (json.contains("reapplyCapabilities")) {
+            QJsonArray arr(json["reapplyCapabilities"].toArray());
+            for (int i = 0; i < arr.size(); ++i) {
+                s.reapplyCapabilities.append(arr[i].toString());
+            }
+        }
         qDebug() << "Settings Loaded:\t" << json;
         qDebug();
     }
@@ -85,6 +101,14 @@ void saveSettingstoFile(const Settings &settings, const QString &filePath)
     json["updateChannel"] = settings.updateChannel;
     json["lastSelectedVendorID"] = settings.lastSelectedVendorID;
     json["lastSelectedProductID"] = settings.lastSelectedProductID;
+    json["reapplyConfigEnabled"] = settings.reapplyConfigEnabled;
+    json["reapplyConfigInterval"] = settings.reapplyConfigInterval;
+    json["applyOnConnect"] = settings.applyOnConnect;
+    QJsonArray arr;
+    for (const QString &cap : settings.reapplyCapabilities) {
+        arr.append(cap);
+    }
+    json["reapplyCapabilities"] = arr;
 
     QJsonDocument doc(json);
     QFile file(filePath);

@@ -17,6 +17,7 @@ SOURCES += \
     src/UI/dialoginfo.cpp \
     src/UI/loaddevicewindow.cpp \
     src/UI/mainwindow.cpp \
+    src/UI/reapplyconfigwindow.cpp \
     src/Utils/utils.cpp
 
 HEADERS += \
@@ -25,6 +26,7 @@ HEADERS += \
     src/UI/dialoginfo.h \
     src/UI/loaddevicewindow.h \
     src/UI/mainwindow.h \
+    src/UI/reapplyconfigwindow.h \
     src/UI/settingswindow.h \
     src/Utils/headsetcontrolapi.h \
     src/Utils/utils.h
@@ -33,6 +35,7 @@ FORMS += \
     src/UI/dialoginfo.ui \
     src/UI/loaddevicewindow.ui \
     src/UI/mainwindow.ui \
+    src/UI/reapplyconfigwindow.ui \
     src/UI/settingswindow.ui
 
 TRANSLATIONS += \

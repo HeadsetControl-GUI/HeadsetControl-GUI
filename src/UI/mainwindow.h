@@ -47,6 +47,7 @@ private:
     QAction *ledOff;
     QTimer *timerGUI;
     QTimer *timerCommand;
+    QTimer *timerReapplyConfig;
 
     void sendCommand();
 
@@ -110,6 +111,7 @@ private slots:
 
     //Update GUI Section
     void updateGUI();
+    void reapplySettings();
 
     // Equalizer Section Events
     void equalizerPresetChanged();

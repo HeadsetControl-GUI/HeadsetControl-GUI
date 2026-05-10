@@ -24,6 +24,7 @@ signals:
 
 private:
     Ui::settingswindow *ui;
+    Settings tempSettings;
 
     void setRunOnStartup();
     void loadStyles();

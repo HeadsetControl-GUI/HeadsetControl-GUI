@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     , trayMenu(new QMenu(this))
     , timerGUI(new QTimer(this))
     , timerCommand(new QTimer(this))
+    , timerReapplyConfig(new QTimer(this))
     , API(HeadsetControlAPI(HEADSETCONTROL_DIRECTORY))
 {
     qDebug() << "Headsetcontrol";
@@ -60,6 +61,11 @@ MainWindow::MainWindow(QWidget *parent)
     if(settings.commandExe != ""){
         timerCommand->start(settings.msecCommandIntervalTime);
     }
+
+    connect(timerReapplyConfig, &QTimer::timeout, this, &MainWindow::reapplySettings);
+    if (settings.reapplyConfigEnabled) {
+        timerReapplyConfig->start(settings.reapplyConfigInterval * 1000);
+    }
 }
 
 void sobstituteArgs(QStringList &args, const Device* device){
@@ -91,8 +97,10 @@ MainWindow::~MainWindow()
 {
     timerGUI->stop();
     timerCommand->stop();
+    timerReapplyConfig->stop();
     delete timerGUI;
     delete timerCommand;
+    delete timerReapplyConfig;
     delete trayMenu;
     delete trayIcon;
     delete ui;
@@ -359,6 +367,7 @@ void MainWindow::resetGUI()
 
     ui->deviceinfoFrame->setHidden(true);
     ui->batteryFrame->setHidden(true);
+    ui->batteryPercentage->setText("");
 
     ui->tabWidget->hide();
     ui->tabWidget->setTabEnabled(3, false);
@@ -662,56 +671,62 @@ void MainWindow::setBatteryStatus()
             }
             notified = true;
         }
-    } else if (status == "BATTERY_CHARGING" && batteryLevel >= 0) {
-        ui->batteryPercentage->setText(level + tr("% - Charging"));
-        trayIcon->setToolTip(tr("HeadsetControl \r\nBattery: Charging - ") + level + "%");
-        if (batteryLevel >= 100) {
-            changeTrayIconTo("battery-fully-charged");
-            if (settings.audioNotification) {
-                API.playNotificationSound(1);
-            }
-            if (settings.notificationBatteryFull && !notified) {
-                sendAppNotification(tr("Battery Charged!"),
-                                    tr("The battery has been charged to 100%"),
-                                    "battery-level-full");
-                notified = true;
-            }
-        } else {
-            changeTrayIconTo("battery-charging");
-        }
-    } else if (status == "BATTERY_AVAILABLE" && batteryLevel >= 0) {
-        ui->batteryPercentage->setText(level + tr("% - Descharging"));
-        trayIcon->setToolTip(tr("HeadsetControl \r\nBattery: ") + level + "%");
-        if (batteryLevel > 75) {
-            changeTrayIconTo("battery-level-full");
-            notified = false;
-        } else if (batteryLevel > settings.batteryLowThreshold) {
-            changeTrayIconTo("battery-medium");
-            notified = false;
-        } else {
-            changeTrayIconTo("battery-low");
-            if (settings.audioNotification) {
-                API.playNotificationSound(0);
-            }
-            if (settings.notificationBatteryLow && !notified) {
-                sendAppNotification(tr("Battery Alert!"),
-                                    tr("The battery of your headset is running low"),
-                                    "battery-low");
-                notified = true;
-            }
-        }
     } else {
-        ui->batteryPercentage->setText(tr("Error getting battery info: ") + level);
-        trayIcon->setToolTip(tr("HeadsetControl \r\nBattery: Error ") + level);
-        changeTrayIconTo("battery-error");
-        if (settings.notificationHeadsetDisconnected && !notified) {
-            sendAppNotification(tr("Headset Error"),
-                                tr("Error getting battery info, headset might be turned off"),
-                                "battery-error");
-            if (settings.audioNotification) {
-                API.playNotificationSound(0);
+        if (settings.applyOnConnect && (ui->batteryPercentage->text() == tr("Headset Off") || ui->batteryPercentage->text().isEmpty())) {
+            reapplySettings();
+        }
+
+        if (status == "BATTERY_CHARGING" && batteryLevel >= 0) {
+            ui->batteryPercentage->setText(level + tr("% - Charging"));
+            trayIcon->setToolTip(tr("HeadsetControl \r\nBattery: Charging - ") + level + "%");
+            if (batteryLevel >= 100) {
+                changeTrayIconTo("battery-fully-charged");
+                if (settings.audioNotification) {
+                    API.playNotificationSound(1);
+                }
+                if (settings.notificationBatteryFull && !notified) {
+                    sendAppNotification(tr("Battery Charged!"),
+                                        tr("The battery has been charged to 100%"),
+                                        "battery-level-full");
+                    notified = true;
+                }
+            } else {
+                changeTrayIconTo("battery-charging");
             }
-            notified = true;
+        } else if (status == "BATTERY_AVAILABLE" && batteryLevel >= 0) {
+            ui->batteryPercentage->setText(level + tr("% - Descharging"));
+            trayIcon->setToolTip(tr("HeadsetControl \r\nBattery: ") + level + "%");
+            if (batteryLevel > 75) {
+                changeTrayIconTo("battery-level-full");
+                notified = false;
+            } else if (batteryLevel > settings.batteryLowThreshold) {
+                changeTrayIconTo("battery-medium");
+                notified = false;
+            } else {
+                changeTrayIconTo("battery-low");
+                if (settings.audioNotification) {
+                    API.playNotificationSound(0);
+                }
+                if (settings.notificationBatteryLow && !notified) {
+                    sendAppNotification(tr("Battery Alert!"),
+                                        tr("The battery of your headset is running low"),
+                                        "battery-low");
+                    notified = true;
+                }
+            }
+        } else {
+            ui->batteryPercentage->setText(tr("Error getting battery info: ") + level);
+            trayIcon->setToolTip(tr("HeadsetControl \r\nBattery: Error ") + level);
+            changeTrayIconTo("battery-error");
+            if (settings.notificationHeadsetDisconnected && !notified) {
+                sendAppNotification(tr("Headset Error"),
+                                    tr("Error getting battery info, headset might be turned off"),
+                                    "battery-error");
+                if (settings.audioNotification) {
+                    API.playNotificationSound(0);
+                }
+                notified = true;
+            }
         }
     }
 }
@@ -819,6 +834,39 @@ void MainWindow::setEqualizerSliders(QList<double> values)
     }
 }
 
+void MainWindow::reapplySettings()
+{
+    if (selectedDevice == nullptr || (!settings.reapplyConfigEnabled && !settings.applyOnConnect) || settings.reapplyCapabilities.empty())
+        return;
+
+    qDebug() << "Reapplying settings...";
+    for (const QString &cap : settings.reapplyCapabilities) {
+        if (cap == "lights" && selectedDevice->lights != -1) {
+            API.setLights(selectedDevice->lights, false);
+        } else if (cap == "sidetone" && selectedDevice->sidetone != -1) {
+            API.setSidetone(selectedDevice->sidetone, false);
+        } else if (cap == "voice_prompts" && selectedDevice->voice_prompts != -1) {
+            API.setVoicePrompts(selectedDevice->voice_prompts, false);
+        } else if (cap == "inactive_time" && selectedDevice->inactive_time != -1) {
+            API.setInactiveTime(selectedDevice->inactive_time, false);
+        } else if (cap == "volume_limiter" && selectedDevice->volume_limiter != -1) {
+            API.setVolumeLimiter(selectedDevice->volume_limiter, false);
+        } else if (cap == "equalizer" && selectedDevice->equalizer_preset != -1) {
+            API.setEqualizerPreset(selectedDevice->equalizer_preset, false);
+        } else if (cap == "rotate_to_mute" && selectedDevice->rotate_to_mute != -1) {
+            API.setRotateToMute(selectedDevice->rotate_to_mute, false);
+        } else if (cap == "mic_mute_led" && selectedDevice->mic_mute_led_brightness != -1) {
+            API.setMuteLedBrightness(selectedDevice->mic_mute_led_brightness, false);
+        } else if (cap == "mic_volume" && selectedDevice->mic_volume != -1) {
+            API.setMicrophoneVolume(selectedDevice->mic_volume, false);
+        } else if (cap == "bt_power" && selectedDevice->bt_when_powered_on != -1) {
+            API.setBluetoothWhenPoweredOn(selectedDevice->bt_when_powered_on, false);
+        } else if (cap == "bt_volume" && selectedDevice->bt_call_volume != -1) {
+            API.setBluetoothCallVolume(selectedDevice->bt_call_volume, false);
+        }
+    }
+}
+
 // Tool Bar Events
 void MainWindow::selectDevice()
 {
@@ -854,6 +902,12 @@ void MainWindow::editProgramSetting()
             timerCommand->stop();
             timerCommand->start(settings.msecCommandIntervalTime);
         }
+        
+        timerReapplyConfig->stop();
+        if (settings.reapplyConfigEnabled) {
+            timerReapplyConfig->start(settings.reapplyConfigInterval * 1000);
+        }
+        
         updateStyle();
     }
     delete (settingsW);

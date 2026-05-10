@@ -235,6 +235,32 @@
     </widget>
    </item>
    <item>
+    <widget class="QFrame" name="reapplyConfigFrame">
+     <property name="frameShape">
+      <enum>QFrame::Shape::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Shadow::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_reapply">
+      <item>
+       <widget class="QLabel" name="reapplyConfigLabel">
+        <property name="text">
+         <string>Reapply Config:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="configureReapplyConfigPushButton">
+        <property name="text">
+         <string>Configure Reapply Config...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QFrame" name="frame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">

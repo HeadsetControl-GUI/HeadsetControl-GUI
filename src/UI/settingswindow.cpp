@@ -1,6 +1,7 @@
 #include "settingswindow.h"
 #include "ui_settingswindow.h"
 
+#include "reapplyconfigwindow.h"
 #include "utils.h"
 
 #include <QFileDialog>
@@ -9,6 +10,7 @@
 SettingsWindow::SettingsWindow(const Settings &programSettings, QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::settingswindow)
+    , tempSettings(programSettings)
 {
     setModal(true);
     ui->setupUi(this);
@@ -49,6 +51,14 @@ SettingsWindow::SettingsWindow(const Settings &programSettings, QWidget *parent)
     connect(ui->updateHeadsetControlPushButton, &QPushButton::clicked, this, [this]() {
         emit requestUpdate(ui->updateChannelComboBox->currentText());
     });
+
+    connect(ui->configureReapplyConfigPushButton, &QPushButton::clicked, this, [this]() {
+        Settings currentSettings = getSettings();
+        ReapplyConfigWindow diag(currentSettings, this);
+        if (diag.exec() == QDialog::Accepted) {
+            tempSettings = diag.getSettings();
+        }
+    });
 }
 
 Settings SettingsWindow::getSettings()
@@ -66,6 +76,11 @@ Settings SettingsWindow::getSettings()
     settings.commandArgs = ui->commandargumentsValue->text();
     settings.msecCommandIntervalTime = ui->commandintervaltimeDoubleSpinBox->value() * 1000;
     settings.updateChannel = ui->updateChannelComboBox->currentText();
+
+    settings.reapplyConfigEnabled = tempSettings.reapplyConfigEnabled;
+    settings.reapplyConfigInterval = tempSettings.reapplyConfigInterval;
+    settings.applyOnConnect = tempSettings.applyOnConnect;
+    settings.reapplyCapabilities = tempSettings.reapplyCapabilities;
 
     return settings;
 }
