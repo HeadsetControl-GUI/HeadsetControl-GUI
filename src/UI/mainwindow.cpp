@@ -915,6 +915,13 @@ void MainWindow::editProgramSetting()
 
 void MainWindow::checkForUpdates()
 {
+    if (!API.areApiAvailable()) {
+        ui->headsetControlUpdateFrame->setVisible(false);
+        ui->headsetControlUpdateRow->setVisible(false);
+        ui->headsetControlGuiUpdateRow->setVisible(false);
+        return;
+    }
+
     bool needsHeadsetControlUpdate = false;
     bool needsGuiUpdate = false;
 
@@ -995,10 +1002,9 @@ void MainWindow::updateHeadsetControl(QString channel)
     if (downloadAndExtractHeadsetControl(channel, dirPath)) {
         QMessageBox::information(this, "Success", "HeadsetControl updated successfully!");
         timerGUI->stop();
-        loadDevice();
+        updateGUI();
         timerGUI->start();
         checkForUpdates();
-        rescaleAndMoveWindow();
     } else {
         QMessageBox::warning(this, "Error", "Failed to update HeadsetControl.");
     }
