@@ -42,7 +42,7 @@ public:
 
     QString lastSelectedVendorID = "", lastSelectedProductID = "";
 
-    bool reapplyConfigEnabled = false;
+    bool reapplyAtInterval = false;
     int reapplyConfigInterval = 10;
     bool applyOnConnect = false;
     QStringList reapplyCapabilities;

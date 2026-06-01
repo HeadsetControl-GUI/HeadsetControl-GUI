@@ -65,7 +65,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     connect(timerReapplyConfig, &QTimer::timeout, this, &MainWindow::reapplySettings);
-    if (settings.reapplyConfigEnabled) {
+    if (settings.reapplyAtInterval) {
         timerReapplyConfig->start(settings.reapplyConfigInterval * 1000);
     }
 }
@@ -851,7 +851,7 @@ void MainWindow::setEqualizerSliders(QList<double> values)
 
 void MainWindow::reapplySettings()
 {
-    if (selectedDevice == nullptr || (!settings.reapplyConfigEnabled && !settings.applyOnConnect) || settings.reapplyCapabilities.empty())
+    if (selectedDevice == nullptr || (!settings.reapplyAtInterval && !settings.applyOnConnect) || settings.reapplyCapabilities.empty())
         return;
 
     qDebug() << "Reapplying settings...";
@@ -919,7 +919,7 @@ void MainWindow::editProgramSetting()
         }
         
         timerReapplyConfig->stop();
-        if (settings.reapplyConfigEnabled) {
+        if (settings.reapplyAtInterval) {
             timerReapplyConfig->start(settings.reapplyConfigInterval * 1000);
         }
         

@@ -77,7 +77,7 @@ Settings SettingsWindow::getSettings()
     settings.msecCommandIntervalTime = ui->commandintervaltimeDoubleSpinBox->value() * 1000;
     settings.updateChannel = ui->updateChannelComboBox->currentText();
 
-    settings.reapplyConfigEnabled = tempSettings.reapplyConfigEnabled;
+    settings.reapplyAtInterval = tempSettings.reapplyAtInterval;
     settings.reapplyConfigInterval = tempSettings.reapplyConfigInterval;
     settings.applyOnConnect = tempSettings.applyOnConnect;
     settings.reapplyCapabilities = tempSettings.reapplyCapabilities;

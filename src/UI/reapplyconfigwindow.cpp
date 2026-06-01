@@ -30,7 +30,7 @@ ReapplyConfigWindow::~ReapplyConfigWindow()
 
 void ReapplyConfigWindow::loadSettings()
 {
-    ui->reapplyEnableCheckBox->setChecked(settings.reapplyConfigEnabled);
+    ui->reapplyEnableCheckBox->setChecked(settings.reapplyAtInterval);
     ui->intervalSpinBox->setValue(settings.reapplyConfigInterval);
     ui->connectApplyCheckBox->setChecked(settings.applyOnConnect);
 
@@ -43,7 +43,7 @@ void ReapplyConfigWindow::loadSettings()
 
 Settings ReapplyConfigWindow::getSettings()
 {
-    settings.reapplyConfigEnabled = ui->reapplyEnableCheckBox->isChecked();
+    settings.reapplyAtInterval = ui->reapplyEnableCheckBox->isChecked();
     settings.reapplyConfigInterval = ui->intervalSpinBox->value();
     settings.applyOnConnect = ui->connectApplyCheckBox->isChecked();
 

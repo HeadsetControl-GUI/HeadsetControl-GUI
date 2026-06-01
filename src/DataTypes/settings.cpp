@@ -62,8 +62,8 @@ Settings loadSettingsFromFile(const QString &filePath)
         if (json.contains("lastSelectedProductID")) {
             s.lastSelectedProductID = json["lastSelectedProductID"].toString();
         }
-        if (json.contains("reapplyConfigEnabled")) {
-            s.reapplyConfigEnabled = json["reapplyConfigEnabled"].toBool();
+        if (json.contains("reapplyAtInterval")) {
+            s.reapplyAtInterval = json["reapplyAtInterval"].toBool();
         }
         if (json.contains("reapplyConfigInterval")) {
             s.reapplyConfigInterval = json["reapplyConfigInterval"].toInt();
@@ -101,7 +101,7 @@ void saveSettingstoFile(const Settings &settings, const QString &filePath)
     json["updateChannel"] = settings.updateChannel;
     json["lastSelectedVendorID"] = settings.lastSelectedVendorID;
     json["lastSelectedProductID"] = settings.lastSelectedProductID;
-    json["reapplyConfigEnabled"] = settings.reapplyConfigEnabled;
+    json["reapplyAtInterval"] = settings.reapplyAtInterval;
     json["reapplyConfigInterval"] = settings.reapplyConfigInterval;
     json["applyOnConnect"] = settings.applyOnConnect;
     QJsonArray arr;
