@@ -15,6 +15,7 @@
 #include <QScreen>
 #include <QStyleHints>
 #include <QUrl>
+#include <QCloseEvent>
 #include <QCursor>
 #include <QDebug>
 
@@ -328,24 +329,31 @@ void MainWindow::showEvent(QShowEvent *event)
     }
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (!settings.terminateOnClose && trayIcon->isVisible()) {
+        hide();
+        event->ignore();
+    }
+}
+
 //Window Position and Size Section
 void MainWindow::toggleWindow()
 {
-    if (isHidden()) {
-        show();
+    if (isHidden() || isMinimized()) {
+        showNormal();
+        activateWindow();
+        raise();
     } else {
         hide();
     }
 }
 
-void MainWindow::minimizeWindowSize()
+void MainWindow::rescaleAndMoveWindow()
 {
     resize(0, 0);
     adjustSize();
-}
 
-void MainWindow::moveToBottomRight()
-{
     QScreen *screen = QGuiApplication::screenAt(trayIcon->geometry().center());
     if (!screen) {
         screen = QGuiApplication::screenAt(QCursor::pos());
@@ -355,13 +363,7 @@ void MainWindow::moveToBottomRight()
     }
 
     QRect screenGeometry = screen->availableGeometry();
-    move(screenGeometry.right() - width() - 5, screenGeometry.bottom() - height() - 5);
-}
-
-void MainWindow::rescaleAndMoveWindow()
-{
-    minimizeWindowSize();
-    moveToBottomRight();
+    move(screenGeometry.right() - frameGeometry().width() - 5, screenGeometry.bottom() - frameGeometry().height() - 5);
 }
 
 void MainWindow::resetGUI()

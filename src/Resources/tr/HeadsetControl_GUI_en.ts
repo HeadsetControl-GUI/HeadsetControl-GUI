@@ -572,5 +572,10 @@ DON&apos;T PUT TOO LOW VALUES</source>
         <source>Remove</source>
         <translation></translation>
     </message>
+    <message>
+        <location filename="../../UI/settingswindow.ui" line="54"/>
+        <source>Terminate program when window is closed:</source>
+        <translation></translation>
+    </message>
 </context>
 </TS>

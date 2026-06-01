@@ -23,6 +23,7 @@ public:
     Settings();
 
     bool runOnstartup = false;
+    bool terminateOnClose = false;
 
     bool notificationHeadsetDisconnected = true;
     bool notificationBatteryFull = true;

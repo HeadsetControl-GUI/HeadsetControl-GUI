@@ -26,6 +26,7 @@ SettingsWindow::SettingsWindow(const Settings &programSettings, QWidget *parent)
     connect(ui->removestylePushButton, &QPushButton::clicked, this, &SettingsWindow::removeStyle);
 
     ui->runonstartupCheckBox->setChecked(programSettings.runOnstartup);
+    ui->terminateOnCloseCheckBox->setChecked(programSettings.terminateOnClose);
 
     ui->headsetdisconnectednotificationCheckBox->setChecked(programSettings.notificationHeadsetDisconnected);
     ui->batteryfullnotificationCheckBox->setChecked(programSettings.notificationBatteryFull);
@@ -65,6 +66,7 @@ Settings SettingsWindow::getSettings()
 {
     Settings settings;
     settings.runOnstartup = ui->runonstartupCheckBox->isChecked();
+    settings.terminateOnClose = ui->terminateOnCloseCheckBox->isChecked();
     settings.notificationHeadsetDisconnected = ui->headsetdisconnectednotificationCheckBox->isChecked();
     settings.notificationBatteryFull = ui->batteryfullnotificationCheckBox->isChecked();
     settings.notificationBatteryLow = ui->batterylownotificationCheckBox->isChecked();

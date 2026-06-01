@@ -77,11 +77,10 @@ private:
     void resetGUI();
 
     //Window Position and Size Section
-    void minimizeWindowSize();
-    void moveToBottomRight();
     void rescaleAndMoveWindow();
     void toggleWindow();
     void showEvent(QShowEvent *event);
+    void closeEvent(QCloseEvent *event);
 
     //Utility
     void sendAppNotification(const QString &title, const QString &description, const QString &icon);
