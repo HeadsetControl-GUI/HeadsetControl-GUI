@@ -1,5 +1,6 @@
 #include "headsetcontrolapi.h"
 
+#include <QCoreApplication>
 #include <QDir>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -22,6 +23,11 @@ HeadsetControlAPI::HeadsetControlAPI(const QString& headsetcontrolDirectory)
     selectedProductId="0";
 }
 
+HeadsetControlAPI::~HeadsetControlAPI()
+{
+    if (selectedDevice != nullptr) delete selectedDevice;
+}
+
 Device* HeadsetControlAPI::getSelectedDevice()
 {
     return selectedDevice;
@@ -29,13 +35,18 @@ Device* HeadsetControlAPI::getSelectedDevice()
 
 bool HeadsetControlAPI::areApiAvailable(){
     QString executableName = this->headsetcontrolFilePath;
-    QFileInfo fileInfo(QDir::currentPath(),executableName);
-    if (fileInfo.exists())
-        return true;
-    else {
-        QString path = QStandardPaths::findExecutable(executableName);
-        return !path.isEmpty();
-    }
+    
+    // Check current working directory
+    QFileInfo fileInfo(QDir::currentPath(), executableName);
+    if (fileInfo.exists()) return true;
+
+    // Check application directory
+    QFileInfo appDirInfo(QCoreApplication::applicationDirPath(), executableName);
+    if (appDirInfo.exists()) return true;
+
+    // Check system PATH
+    QString path = QStandardPaths::findExecutable(executableName);
+    return !path.isEmpty();
 }
 
 void HeadsetControlAPI::setSelectedDevice(const QString& vendorId, const QString& productId)
@@ -48,15 +59,23 @@ void HeadsetControlAPI::setSelectedDevice(const QString& vendorId, const QString
         selectedProductId = "0";
     else
         selectedProductId=productId;
+
+    if (selectedDevice != nullptr) delete selectedDevice;
     selectedDevice = getDevice();
 }
 
 void HeadsetControlAPI::updateSelectedDevice(){
     Device* newD = getDevice();
     if (newD == nullptr){
+        if (selectedDevice != nullptr) delete selectedDevice;
         selectedDevice = nullptr;
     } else {
-        selectedDevice->updateInfo(newD);
+        if (selectedDevice == nullptr) {
+            selectedDevice = newD;
+        } else {
+            selectedDevice->updateInfo(newD);
+            delete newD;
+        }
     }
 }
 

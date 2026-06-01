@@ -427,6 +427,10 @@ void MainWindow::loadDevice()
     selectedDevice = API.getSelectedDevice();
     if (selectedDevice == nullptr) {
         API.setSelectedDevice("0", "0");
+        selectedDevice = API.getSelectedDevice();
+    }
+
+    if (selectedDevice == nullptr) {
         ui->missingheadsetcontrolFrame->setHidden(true);
         rescaleAndMoveWindow();
         return;
@@ -438,7 +442,6 @@ void MainWindow::loadDevice()
 
     QSet<Capability> &capabilities = selectedDevice->capabilities;
 
-    ui->missingheadsetcontrolFrame->setHidden(true);
     ui->notSupportedFrame->setHidden(true);
 
     qDebug() << "Selected Device";
@@ -618,11 +621,8 @@ bool MainWindow::updateSelectedDevice()
     }
 
     API.updateSelectedDevice();
-    bool stillTheSame = API.getSelectedDevice() != nullptr;
-    if (stillTheSame) {
-        API.setSelectedDevice("0","0");
-        selectedDevice = API.getSelectedDevice();
-    }
+    selectedDevice = API.getSelectedDevice();
+    bool stillTheSame = selectedDevice != nullptr;
 
     if(selectedDevice != nullptr && lastStatus != selectedDevice->battery.status){
         notified = false;

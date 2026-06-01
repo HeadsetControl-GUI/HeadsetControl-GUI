@@ -169,6 +169,7 @@ void Device::updateConfig(const QList<Device *> &list){
 
 void Device::updateInfo(const Device *new_device)
 {
+    this->status = new_device->status;
     this->battery = new_device->battery;
     this->chatmix = new_device->chatmix;
 }
