@@ -420,6 +420,10 @@ void MainWindow::loadDevice()
 {
     resetGUI();
 
+    if (API.areApiAvailable()) {
+        ui->missingheadsetcontrolFrame->setHidden(true);
+    }
+
     if (firstRun){
         notified = true;
         firstRun = false;
@@ -433,7 +437,6 @@ void MainWindow::loadDevice()
     }
 
     if (selectedDevice == nullptr) {
-        ui->missingheadsetcontrolFrame->setHidden(true);
         rescaleAndMoveWindow();
         return;
     } else {
@@ -653,6 +656,7 @@ void MainWindow::updateGUI()
         ui->headsetControlUpdateFrame->setVisible(needsHeadsetControlUpdate || needsGuiUpdate);
         ui->headsetControlUpdateRow->setVisible(needsHeadsetControlUpdate);
         ui->headsetControlGuiUpdateRow->setVisible(needsGuiUpdate);
+        rescaleAndMoveWindow();
     }
 }
 
