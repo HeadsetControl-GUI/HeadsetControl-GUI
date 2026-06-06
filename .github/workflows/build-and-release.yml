@@ -110,6 +110,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
+        - name: Update continuous tag
+          if: inputs.version == 'continuous'
+          run: gh release delete continuous --cleanup-tag || true
+          env:
+            GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         - name: Download Artifact
           uses: actions/download-artifact@v4
           with:
